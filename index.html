@@ -29,30 +29,34 @@
         .content { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; }
         .input-area { padding: 16px 24px 24px; background: var(--bg-app); border-top: 1px solid var(--border); }
 
-        .brand { display: flex; align-items: center; gap: 12px; padding: 12px; margin-bottom: 24px; }
-        .brand img { width: 32px; height: 32px; border-radius: 6px; }
-        .brand-name { font-weight: 700; font-size: 15px; letter-spacing: 0.5px; }
+        .brand { display: flex; align-items: center; gap: 12px; padding: 8px 12px; margin-bottom: 24px; }
+        .brand img { width: 40px; height: 40px; border-radius: 8px; object-fit: contain; }
+        .brand-name { font-weight: 700; font-size: 14px; letter-spacing: 0.08em; color: var(--text-main); text-transform: uppercase; }
         
         .nav-group { margin-bottom: 24px; }
         .nav-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 0 12px; margin-bottom: 8px; }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius); cursor: pointer; color: var(--text-muted); font-size: 14px; font-weight: 500; transition: all 0.2s; margin-bottom: 2px; position: relative; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-radius: var(--radius); cursor: pointer; color: var(--text-muted); font-size: 14px; font-weight: 500; transition: all 0.2s; margin-bottom: 2px; position: relative; }
         .nav-item:hover { background: var(--bg-panel); color: var(--text-main); }
         .nav-item.active { background: var(--bg-panel); color: var(--text-main); }
-        .nav-item.active::before { content: ''; position: absolute; left: 0; width: 3px; height: 20px; background: var(--accent); border-radius: 0 4px 4px 0; }
+        .nav-item.active::before { content: ''; position: absolute; left: 0; width: 3px; height: 18px; background: var(--accent); border-radius: 0 4px 4px 0; }
         .nav-item svg { width: 16px; height: 16px; stroke-width: 2; }
 
         .chat-list { flex: 1; overflow-y: auto; }
-        .chat-item { padding: 10px 12px; border-radius: var(--radius); cursor: pointer; font-size: 13px; color: var(--text-muted); transition: background 0.2s; margin-bottom: 2px; }
+        .chat-item { padding: 9px 12px; border-radius: var(--radius); cursor: pointer; font-size: 13px; color: var(--text-muted); transition: background 0.2s; margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center; }
         .chat-item:hover { background: var(--bg-panel); color: var(--text-main); }
-        .chat-item.active { background: var(--bg-panel); color: var(--text-main); border-left: 3px solid var(--accent); }
+        .chat-item.active { background: var(--bg-panel); color: var(--text-main); }
+        .chat-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+        .chat-item button { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; font-size: 16px; line-height: 1; opacity: 0; transition: opacity 0.2s; }
+        .chat-item:hover button { opacity: 1; }
+        .chat-item button:hover { color: #ef4444; }
 
-        .view { display: none; max-width: 800px; margin: 0 auto; width: 100%; flex: 1; }
+        .view { display: none; max-width: 900px; margin: 0 auto; width: 100%; flex: 1; }
         .view.active { display: flex; flex-direction: column; }
         
         .messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding-bottom: 24px; }
         .msg { display: flex; gap: 16px; animation: fadeIn 0.3s ease; }
         .msg.user { flex-direction: row-reverse; }
-        .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--bg-panel); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; border: 1px solid var(--border); }
+        .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--bg-panel); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; border: 1px solid var(--border); }
         .msg.user .avatar { background: var(--accent); color: white; border: none; }
         .bubble { padding: 12px 16px; border-radius: 12px; font-size: 15px; line-height: 1.6; max-width: 85%; word-wrap: break-word; }
         .msg.assistant .bubble { background: var(--bg-panel); border: 1px solid var(--border); }
@@ -64,10 +68,15 @@
         .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; }
         .form-input, .form-select, .form-textarea { width: 100%; padding: 10px 12px; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-main); font-family: var(--font-sans); font-size: 14px; outline: none; transition: border-color 0.2s; }
         .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
-        .form-textarea { min-height: 80px; resize: vertical; }
+        .form-textarea { min-height: 100px; resize: vertical; }
         
-        .result-box { margin-top: 24px; padding: 24px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; min-height: 200px; display: flex; align-items: center; justify-content: center; }
+        .result-box { margin-top: 24px; padding: 24px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; min-height: 200px; display: flex; align-items: center; justify-content: center; position: relative; }
         .result-box img, .result-box video { max-width: 100%; border-radius: 8px; }
+        
+        .loading-overlay { position: absolute; inset: 0; background: rgba(9, 9, 11, 0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; border-radius: 12px; z-index: 10; }
+        .progress-bar { width: 200px; height: 4px; background: var(--bg-input); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--accent); transition: width 0.3s ease; }
+        .loading-text { font-size: 13px; color: var(--text-muted); }
 
         .input-wrapper { max-width: 800px; margin: 0 auto; position: relative; }
         .input-box { width: 100%; padding: 14px 48px 14px 16px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: var(--text-main); font-size: 15px; font-family: var(--font-sans); resize: none; outline: none; min-height: 52px; max-height: 200px; transition: border-color 0.2s; }
@@ -95,7 +104,7 @@
     <aside class="sidebar">
         <div class="brand">
             <img src="logo.png" alt="Logo">
-            <div class="brand-name">SAINT SILK</div>
+            <div class="brand-name">Saint Silk</div>
         </div>
 
         <div class="nav-group">
@@ -121,7 +130,10 @@
             </div>
         </div>
         
-        <button class="btn btn-ghost" style="width: 100%; justify-content: center;" onclick="newChat()">+ New Chat</button>
+        <button class="btn btn-ghost" style="width: 100%; justify-content: center; margin-top: 8px;" onclick="newChat()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            New Chat
+        </button>
     </aside>
 
     <main class="main">
@@ -139,14 +151,15 @@
                 <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 24px;">Image Generation</h2>
                 <div class="form-group">
                     <label class="form-label">Prompt</label>
-                    <textarea class="form-textarea" id="img-prompt" placeholder="A cinematic shot of a cyberpunk city..."></textarea>
+                    <textarea class="form-textarea" id="img-prompt" placeholder="Describe your image in detail..."></textarea>
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Resolution</label>
                         <select class="form-select" id="img-res">
-                            <option value="1024">1024px</option>
-                            <option value="1536">1536px</option>
+                            <option value="1024">1024px (Standard)</option>
+                            <option value="1536">1536px (High)</option>
+                            <option value="2048">2048px (Ultra)</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -155,43 +168,106 @@
                             <option value="1:1">1:1 Square</option>
                             <option value="16:9">16:9 Landscape</option>
                             <option value="9:16">9:16 Portrait</option>
+                            <option value="4:3">4:3 Standard</option>
+                            <option value="3:4">3:4 Portrait</option>
                         </select>
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="generateImage()" id="img-btn">Generate</button>
-                <div class="result-box" id="img-result">Your image will appear here.</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Steps</label>
+                        <input type="number" class="form-input" id="img-steps" value="8" min="1" max="50">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Number of Images</label>
+                        <input type="number" class="form-input" id="img-num" value="1" min="1" max="4">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Negative Prompt</label>
+                    <input type="text" class="form-input" id="img-neg" placeholder="What to avoid in the image...">
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Seed (-1 for random)</label>
+                        <input type="number" class="form-input" id="img-seed" value="-1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Enhance Prompt</label>
+                        <select class="form-select" id="img-enhance">
+                            <option value="true">Yes (Auto-enhance)</option>
+                            <option value="false">No (Raw prompt)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="result-box" id="img-result">
+                    <div style="color: var(--text-muted);">Your image will appear here.</div>
+                </div>
             </div>
 
             <div id="view-video" class="view">
                 <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 24px;">Video Generation</h2>
                 <div class="form-group">
                     <label class="form-label">Prompt</label>
-                    <textarea class="form-textarea" id="vid-prompt" placeholder="A drone shot flying over a neon-lit ocean..."></textarea>
+                    <textarea class="form-textarea" id="vid-prompt" placeholder="Describe your video in detail..."></textarea>
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Duration</label>
                         <select class="form-select" id="vid-dur">
-                            <option value="121">5s (121 frames)</option>
+                            <option value="49">2s (49 frames)</option>
                             <option value="73">3s (73 frames)</option>
+                            <option value="121" selected>5s (121 frames)</option>
+                            <option value="193">8s (193 frames)</option>
+                            <option value="241">10s (241 frames)</option>
+                            <option value="361">15s (361 frames)</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Resolution</label>
                         <select class="form-select" id="vid-res">
-                            <option value="720p">720p HD</option>
+                            <option value="1080p">1080p Full HD</option>
+                            <option value="720p" selected>720p HD</option>
                             <option value="540p">540p</option>
+                            <option value="480p">480p</option>
                         </select>
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="generateVideo()" id="vid-btn">Generate</button>
-                <div class="result-box" id="vid-result">Your video will appear here.</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Aspect Ratio</label>
+                        <select class="form-select" id="vid-ar">
+                            <option value="16:9">16:9 Landscape</option>
+                            <option value="4:3">4:3 Standard</option>
+                            <option value="1:1">1:1 Square</option>
+                            <option value="3:4">3:4 Portrait</option>
+                            <option value="9:16">9:16 Portrait</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Guide Scale</label>
+                        <input type="number" class="form-input" id="vid-guide" value="3.0" step="0.5" min="1.0" max="8.0">
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Steps</label>
+                        <input type="number" class="form-input" id="vid-steps" value="8" min="2" max="50">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Seed (-1 for random)</label>
+                        <input type="number" class="form-input" id="vid-seed" value="-1">
+                    </div>
+                </div>
+                <div class="result-box" id="vid-result">
+                    <div style="color: var(--text-muted);">Your video will appear here.</div>
+                </div>
             </div>
         </div>
 
         <div class="input-area">
             <div class="input-wrapper">
-                <textarea class="input-box" id="main-input" placeholder="Message SAINT SILK..." onkeydown="handleInput(event)"></textarea>
+                <textarea class="input-box" id="main-input" placeholder="Message Saint Silk..." onkeydown="handleInput(event)"></textarea>
                 <button class="send-btn" onclick="handleSend()" id="send-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                 </button>
@@ -200,7 +276,6 @@
         </div>
     </main>
 
-    <!-- FIREBASE & APP LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
@@ -230,8 +305,8 @@
         let currentView = 'chat';
         let conversations = [];
         let unsubscribeChats = null;
+        let isGenerating = false;
 
-        // --- AUTH & FIRESTORE SETUP ---
         signInAnonymously(auth).catch((error) => console.error("Auth Error:", error));
 
         onAuthStateChanged(auth, (user) => {
@@ -267,7 +342,6 @@
             });
         }
 
-        // --- ACTIONS ---
         window.newChat = async function() {
             if (!currentUserId) return;
             const newId = Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -320,16 +394,13 @@
             }, { merge: true });
         };
 
-        // --- UI RENDERING ---
         function renderChatList() {
             const list = document.getElementById('chat-list');
             if (!list) return;
             list.innerHTML = conversations.map(c => `
                 <div class="chat-item ${c.id === currentConvId ? 'active' : ''}" onclick="loadChat('${c.id}')">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;">${c.title || 'New Chat'}</span>
-                        <button onclick="deleteChat('${c.id}', event)" style="background:none; border:none; color:var(--text-muted); cursor:pointer; padding:4px; font-size:16px; line-height:1;">×</button>
-                    </div>
+                    <span>${c.title || 'New Chat'}</span>
+                    <button onclick="deleteChat('${c.id}', event)" title="Delete">×</button>
                 </div>
             `).join('');
         }
@@ -355,7 +426,6 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // --- GLOBAL UI FUNCTIONS ---
         window.switchView = function(view, el) {
             currentView = view;
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -364,26 +434,36 @@
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             if(el) el.classList.add('active');
 
-            const hints = { chat: 'Chat Mode • Press Enter to send', image: 'Image Mode • Press Enter to generate', video: 'Video Mode • Press Enter to generate' };
+            const hints = { 
+                chat: 'Chat Mode • Press Enter to send', 
+                image: 'Image Mode • Type prompt and press Enter to generate', 
+                video: 'Video Mode • Type prompt and press Enter to generate' 
+            };
             document.getElementById('input-hint').textContent = hints[view];
             
-            const placeholders = { chat: 'Message SAINT SILK...', image: 'Describe the image...', video: 'Describe the video...' };
+            const placeholders = { 
+                chat: 'Message Saint Silk...', 
+                image: 'Describe the image you want to create...', 
+                video: 'Describe the video you want to create...' 
+            };
             document.getElementById('main-input').placeholder = placeholders[view];
+            document.getElementById('main-input').value = '';
         };
 
         window.handleSend = async function() {
+            if (isGenerating) return;
+            
             const input = document.getElementById('main-input');
             const text = input.value.trim();
             if (!text) return;
-            input.value = '';
-
+            
             if (currentView === 'chat') {
                 if (!currentConvId) await window.newChat();
-                
                 await window.addMsg('user', text);
                 
                 const btn = document.getElementById('send-btn');
                 btn.disabled = true;
+                input.value = '';
                 
                 const conv = conversations.find(c => c.id === currentConvId);
                 const messagesForApi = conv ? conv.messages.map(m => ({role: m.role, content: m.content})) : [{role: 'user', content: text}];
@@ -412,10 +492,12 @@
                 }
             } 
             else if (currentView === 'image') {
-                generateImage(text);
+                await generateImage(text);
+                input.value = '';
             } 
             else if (currentView === 'video') {
-                generateVideo(text);
+                await generateVideo(text);
+                input.value = '';
             }
         };
 
@@ -426,58 +508,169 @@
             }
         };
 
-        window.generateImage = async function(overridePrompt) {
-            const prompt = overridePrompt || document.getElementById('img-prompt').value.trim();
-            if (!prompt) return;
+        window.generateImage = async function(prompt) {
+            if (isGenerating) {
+                alert('Already generating. Please wait...');
+                return;
+            }
             
-            const btn = document.getElementById('img-btn');
+            isGenerating = true;
+            const btn = document.getElementById('send-btn');
             const resBox = document.getElementById('img-result');
+            
+            const steps = parseInt(document.getElementById('img-steps').value) || 8;
+            const numImages = parseInt(document.getElementById('img-num').value) || 1;
+            
+            // Show loading overlay
+            resBox.innerHTML = `
+                <div class="loading-overlay">
+                    <div class="spinner" style="width: 32px; height: 32px;"></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="loading-text">Generating ${numImages} image(s)... This may take 1-5 minutes.</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Steps: ${steps} • Resolution: ${document.getElementById('img-res').value}px</div>
+                </div>
+            `;
+            
             btn.disabled = true;
-            resBox.innerHTML = '<div class="spinner"></div>';
 
             const formData = new FormData();
             formData.append('prompt', prompt);
-            formData.append('resolution', document.getElementById('img-res').value);
+            formData.append('negative_prompt', document.getElementById('img-neg').value || '');
+            formData.append('style_preset', 'None');
+            formData.append('enhance_prompt', document.getElementById('img-enhance').value);
             formData.append('aspect_ratio', document.getElementById('img-ar').value);
-            formData.append('steps', '8');
+            formData.append('resolution', document.getElementById('img-res').value);
+            formData.append('steps', steps.toString());
+            formData.append('num_images', numImages.toString());
+            formData.append('seed', parseInt(document.getElementById('img-seed').value) || -1);
+            formData.append('lora_name', 'None');
 
             try {
-                const res = await fetch(`${API.image}/generate`, { method: 'POST', body: formData });
+                // Simulate progress
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += Math.random() * 15;
+                    if (progress > 90) progress = 90;
+                    const progressBar = resBox.querySelector('.progress-fill');
+                    if (progressBar) progressBar.style.width = progress + '%';
+                }, 2000);
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minute timeout
+
+                const res = await fetch(`${API.image}/generate`, { 
+                    method: 'POST', 
+                    body: formData,
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                clearInterval(progressInterval);
+                
                 const data = await res.json();
+                
+                if (data.error) throw new Error(data.error);
+                
                 if (data.result_url) {
-                    resBox.innerHTML = `<img src="${API.image}${data.result_url}" style="max-width:100%; border-radius:8px;">`;
+                    resBox.innerHTML = `<img src="${API.image}${data.result_url}" style="max-width:100%; border-radius:8px; box-shadow: 0 4px 20px rgba(0,0,0,0.4);">`;
+                } else if (data.result_urls && data.result_urls.length > 0) {
+                    resBox.innerHTML = `<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:16px; width:100%;">${data.result_urls.map(url => `<img src="${API.image}${url}" style="width:100%; border-radius:8px; cursor: pointer;" onclick="window.open(this.src)">`).join('')}</div>`;
                 } else {
-                    resBox.innerHTML = 'Failed to generate.';
+                    throw new Error('No images generated');
                 }
-            } catch (e) { resBox.innerHTML = `Error: ${e.message}`; }
-            finally { btn.disabled = false; }
+            } catch (e) { 
+                if (e.name === 'AbortError') {
+                    resBox.innerHTML = `<div style="color: var(--accent); text-align: center;">Generation timed out. Please try again with lower settings.</div>`;
+                } else {
+                    resBox.innerHTML = `<div style="color: var(--accent); text-align: center;">Error: ${e.message}</div>`;
+                }
+            } finally { 
+                btn.disabled = false;
+                isGenerating = false;
+            }
         };
 
-        window.generateVideo = async function(overridePrompt) {
-            const prompt = overridePrompt || document.getElementById('vid-prompt').value.trim();
-            if (!prompt) return;
+        window.generateVideo = async function(prompt) {
+            if (isGenerating) {
+                alert('Already generating. Please wait...');
+                return;
+            }
             
-            const btn = document.getElementById('vid-btn');
+            isGenerating = true;
+            const btn = document.getElementById('send-btn');
             const resBox = document.getElementById('vid-result');
+            
+            const duration = parseInt(document.getElementById('vid-dur').value) || 121;
+            const steps = parseInt(document.getElementById('vid-steps').value) || 8;
+            const durationSec = Math.round(duration / 24.2); // Approximate fps
+            
+            // Show loading overlay
+            resBox.innerHTML = `
+                <div class="loading-overlay">
+                    <div class="spinner" style="width: 32px; height: 32px;"></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="loading-text">Generating ${durationSec}s video... This may take 3-10 minutes.</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Steps: ${steps} • Resolution: ${document.getElementById('vid-res').value} • Frames: ${duration}</div>
+                </div>
+            `;
+            
             btn.disabled = true;
-            resBox.innerHTML = '<div class="spinner"></div>';
 
             const formData = new FormData();
             formData.append('prompt', prompt);
-            formData.append('duration', document.getElementById('vid-dur').value);
+            formData.append('duration', duration.toString());
             formData.append('resolution', document.getElementById('vid-res').value);
-            formData.append('steps', '8');
+            formData.append('aspect_ratio', document.getElementById('vid-ar').value);
+            formData.append('guide_scale', document.getElementById('vid-guide').value);
+            formData.append('steps', steps.toString());
+            formData.append('seed', parseInt(document.getElementById('vid-seed').value) || -1);
+            formData.append('lora_name', 'None');
 
             try {
-                const res = await fetch(`${API.video}/generate`, { method: 'POST', body: formData });
+                // Simulate progress
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += Math.random() * 8;
+                    if (progress > 90) progress = 90;
+                    const progressBar = resBox.querySelector('.progress-fill');
+                    if (progressBar) progressBar.style.width = progress + '%';
+                }, 3000);
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 600000); // 10 minute timeout
+
+                const res = await fetch(`${API.video}/generate`, { 
+                    method: 'POST', 
+                    body: formData,
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                clearInterval(progressInterval);
+                
                 const data = await res.json();
+                
+                if (data.error) throw new Error(data.error);
+                
                 if (data.result_url) {
-                    resBox.innerHTML = `<video controls src="${API.video}${data.result_url}" style="max-width:100%; border-radius:8px;"></video>`;
+                    resBox.innerHTML = `<video controls autoplay loop src="${API.video}${data.result_url}" style="max-width:100%; border-radius:8px; box-shadow: 0 4px 20px rgba(0,0,0,0.4);"></video>`;
                 } else {
-                    resBox.innerHTML = 'Failed to generate.';
+                    throw new Error('No video generated');
                 }
-            } catch (e) { resBox.innerHTML = `Error: ${e.message}`; }
-            finally { btn.disabled = false; }
+            } catch (e) { 
+                if (e.name === 'AbortError') {
+                    resBox.innerHTML = `<div style="color: var(--accent); text-align: center;">Generation timed out. Video generation can take several minutes. Please try again.</div>`;
+                } else {
+                    resBox.innerHTML = `<div style="color: var(--accent); text-align: center;">Error: ${e.message}</div>`;
+                }
+            } finally { 
+                btn.disabled = false;
+                isGenerating = false;
+            }
         };
     </script>
 </body>
