@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unified AI Studio</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0a0e1a">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -560,7 +563,7 @@
         </div>
     </div>
 
-    <!-- ==================== TEXT-TO-TEXT ==================== -->
+    <!-- TEXT-TO-TEXT -->
     <div id="t2t" class="tab-content active">
         <div class="card">
             <div class="card-title">💬 Qwen 35B Uncensored — Aggressive Mode</div>
@@ -591,7 +594,7 @@
         </div>
     </div>
 
-    <!-- ==================== IMAGE-TO-TEXT ==================== -->
+    <!-- IMAGE-TO-TEXT -->
     <div id="i2t" class="tab-content">
         <div class="card">
             <div class="card-title">👁️ Vision Analysis — Qwen 35B Vision</div>
@@ -612,7 +615,7 @@
         </div>
     </div>
 
-    <!-- ==================== TEXT-TO-IMAGE ==================== -->
+    <!-- TEXT-TO-IMAGE -->
     <div id="t2i" class="tab-content">
         <div class="card">
             <div class="card-title">🎨 Krea-2 Turbo — Fast Text-to-Image</div>
@@ -708,7 +711,7 @@
         </div>
     </div>
 
-    <!-- ==================== IMAGE-TO-IMAGE ==================== -->
+    <!-- IMAGE-TO-IMAGE -->
     <div id="i2i" class="tab-content">
         <div class="card">
             <div class="card-title">🖼️ Krea-2 Turbo — Image Transformation</div>
@@ -742,7 +745,7 @@
         </div>
     </div>
 
-    <!-- ==================== TEXT-TO-VIDEO ==================== -->
+    <!-- TEXT-TO-VIDEO -->
     <div id="t2v" class="tab-content">
         <div class="card">
             <div class="card-title">🎬 LTX-2.3 22B — Text-to-Video</div>
@@ -809,7 +812,7 @@
         </div>
     </div>
 
-    <!-- ==================== IMAGE-TO-VIDEO ==================== -->
+    <!-- IMAGE-TO-VIDEO -->
     <div id="i2v" class="tab-content">
         <div class="card">
             <div class="card-title">🎞️ LTX-2.3 22B — Image-to-Video (First & Last Frame)</div>
@@ -910,9 +913,7 @@
 </div>
 
 <script>
-    // ==========================================
     // API CONFIGURATION - YOUR EXACT NGROK DOMAINS
-    // ==========================================
     const API = {
         t2t: "https://coroner-relock-wrath.ngrok-free.dev",
         i2t: "https://coroner-relock-wrath.ngrok-free.dev",
@@ -922,9 +923,7 @@
         i2v: "https://satin-keep-cupping.ngrok-free.dev"
     };
 
-    // ==========================================
     // TAB SWITCHING
-    // ==========================================
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -934,9 +933,7 @@
         });
     });
 
-    // ==========================================
     // STYLE PRESET CHIPS
-    // ==========================================
     document.querySelectorAll('.style-presets').forEach(container => {
         container.querySelectorAll('.style-chip').forEach(chip => {
             chip.addEventListener('click', () => {
@@ -946,9 +943,7 @@
         });
     });
 
-    // ==========================================
     // FILE UPLOAD HANDLER
-    // ==========================================
     function handleFileUpload(input, uploadId) {
         const uploadDiv = document.getElementById(uploadId);
         if (input.files && input.files[0]) {
@@ -957,9 +952,7 @@
         }
     }
 
-    // ==========================================
     // PROMPT ENHANCER
-    // ==========================================
     const STYLE_MODIFIERS = {
         "Cinematic": "cinematic lighting, dramatic shadows, 8k resolution, highly detailed, film grain, masterpiece",
         "Photographic": "professional photography, 35mm lens, f/2.8, depth of field, natural lighting, highly detailed, photorealistic",
@@ -1003,9 +996,7 @@
         showToast('✨', 'Prompt enhanced!');
     }
 
-    // ==========================================
     // TOAST NOTIFICATIONS
-    // ==========================================
     function showToast(icon, msg) {
         const toast = document.getElementById('toast');
         document.getElementById('toast-icon').textContent = icon;
@@ -1014,9 +1005,7 @@
         setTimeout(() => toast.classList.remove('show'), 3000);
     }
 
-    // ==========================================
     // LOAD ASSETS
-    // ==========================================
     async function loadAssets() {
         try {
             const kreaUrl = API.t2i;
@@ -1037,9 +1026,7 @@
         }
     }
 
-    // ==========================================
     // REGISTER NEW ASSET
-    // ==========================================
     async function registerAsset() {
         const url = document.getElementById('reg-url').value.trim();
         const name = document.getElementById('reg-name').value.trim();
@@ -1076,9 +1063,7 @@
         }
     }
 
-    // ==========================================
     // TASK EXECUTION
-    // ==========================================
     async function runTask(taskId) {
         const outputDiv = document.getElementById(`${taskId}-output`);
         const btn = event.target;
