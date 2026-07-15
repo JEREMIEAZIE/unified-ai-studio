@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified AI Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0e1a;
+            --card: #131829;
+            --card-hover: #1a2038;
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+            --border: #1e293b;
+            --border-hover: #334155;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+            --gradient-3: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            --shadow: 0 10px 40px rgba(0,0,0,0.4);
+            --shadow-lg: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 20% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                radial-gradient(at 80% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-3);
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: 0 4px 30px rgba(30, 60, 114, 0.4);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p { color: rgba(255,255,255,0.8); font-size: 0.9rem; }
+        .header .badges { margin-top: 16px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 16px;
+        }
+
+        /* Model Manager */
+        .manager {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .manager-header {
+            padding: 14px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            background: linear-gradient(135deg, rgba(99,102,241,0.05), rgba(139,92,246,0.05));
+        }
+        .manager-header:hover { color: var(--text); background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1)); }
+        .manager-content { display: none; padding: 0 20px 20px; }
+        .manager-content.active { display: block; }
+        .manager-grid {
+            display: grid;
+            grid-template-columns: 2fr 1.5fr 1fr auto;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .manager-grid input, .manager-grid select {
+            padding: 10px 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.85rem;
+            transition: border-color 0.2s;
+        }
+        .manager-grid input:focus, .manager-grid select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .btn-add {
+            background: var(--success);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-add:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+        .status-msg { font-size: 0.85rem; margin-top: 12px; padding: 8px 12px; border-radius: 8px; }
+
+        /* Tabs */
+        .tabs-wrapper {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 8px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .tabs {
+            display: flex;
+            gap: 4px;
+            min-width: max-content;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 10px 16px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            border-radius: 10px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+        .tab-btn.active {
+            color: white;
+            background: var(--gradient-2);
+            box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+        }
+        .tab-icon { font-size: 1rem; }
+
+        /* Tab Content */
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+        .card-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Form Elements */
+        .input-group { margin-bottom: 16px; }
+        .row { display: grid; gap: 16px; }
+        .row-2 { grid-template-columns: 1fr 1fr; }
+        .row-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .row-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        textarea, input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+        textarea { min-height: 80px; resize: vertical; line-height: 1.5; }
+        
+        .prompt-wrapper { position: relative; }
+        .prompt-wrapper textarea { padding-right: 80px; }
+        .btn-enhance {
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            background: var(--gradient-2);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-enhance:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(99,102,241,0.4); }
+
+        /* Style Presets */
+        .style-presets {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .style-chip {
+            padding: 8px 14px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .style-chip:hover { border-color: var(--primary); color: var(--text); }
+        .style-chip.active {
+            background: var(--gradient-2);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* File Upload */
+        .file-upload {
+            position: relative;
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--bg);
+        }
+        .file-upload:hover { border-color: var(--primary); background: rgba(99,102,241,0.05); }
+        .file-upload input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .file-upload-icon { font-size: 1.8rem; margin-bottom: 8px; }
+        .file-upload-text { color: var(--text-muted); font-size: 0.85rem; }
+        .file-upload.has-file { border-color: var(--success); border-style: solid; }
+        .file-upload.has-file .file-upload-text { color: var(--success); }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--gradient-2);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(99,102,241,0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99,102,241,0.5); }
+        .btn-primary:disabled {
+            background: var(--border);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Output Area */
+        .output-area {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        .output-area img, .output-area video {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+        }
+        .output-area pre {
+            background: #020617;
+            padding: 16px;
+            border-radius: 10px;
+            width: 100%;
+            text-align: left;
+            white-space: pre-wrap;
+            color: var(--text);
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            width: 100%;
+        }
+        .gallery img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .gallery img:hover { transform: scale(1.02); }
+
+        .loading {
+            color: var(--accent);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .spinner {
+            width: 18px; height: 18px;
+            border: 3px solid rgba(6,182,212,0.2);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Accordion */
+        .accordion {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+        .accordion-header {
+            padding: 12px 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .accordion-header:hover { color: var(--text); }
+        .accordion-content { display: none; padding: 0 16px 16px; }
+        .accordion-content.active { display: block; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 18px;
+            box-shadow: var(--shadow-lg);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+        .toast.show { display: flex; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px 20px;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border);
+            margin-top: 32px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.5rem; }
+            .header p { font-size: 0.85rem; }
+            .header .badges { gap: 6px; }
+            .badge { font-size: 0.65rem; padding: 5px 10px; }
+            
+            .container { padding: 16px 12px; }
+            
+            .manager-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .row-2, .row-3, .row-4 {
+                grid-template-columns: 1fr;
+            }
+            
+            .card { padding: 16px; }
+            .card-title { font-size: 0.9rem; }
+            
+            .tab-btn { padding: 8px 12px; font-size: 0.8rem; }
+            .tab-icon { font-size: 0.9rem; }
+            
+            .style-presets { gap: 6px; }
+            .style-chip { padding: 6px 12px; font-size: 0.75rem; }
+            
+            .file-upload { padding: 16px; }
+            .file-upload-icon { font-size: 1.5rem; }
+            
+            .btn-primary { padding: 12px 20px; font-size: 0.9rem; }
+            
+            .output-area { min-height: 150px; padding: 16px; }
+            .output-area img, .output-area video { max-height: 400px; }
+            
+            .gallery { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+            .gallery img { height: 150px; }
+            
+            .toast {
+                bottom: 16px;
+                right: 16px;
+                left: 16px;
+                padding: 12px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header { padding: 20px 16px; }
+            .header h1 { font-size: 1.3rem; }
+            
+            .manager-header { padding: 12px 16px; font-size: 0.9rem; }
+            .manager-content { padding: 0 16px 16px; }
+            
+            .tabs-wrapper { padding: 6px; }
+            .tab-btn { padding: 8px 10px; font-size: 0.75rem; gap: 4px; }
+            
+            .card { padding: 14px; margin-bottom: 16px; }
+            
+            .input-group { margin-bottom: 14px; }
+            label { font-size: 0.75rem; }
+            
+            textarea, input[type="text"], input[type="number"], select {
+                padding: 9px 10px;
+                font-size: 0.85rem;
+            }
+            
+            .btn-enhance { padding: 5px 10px; font-size: 0.7rem; }
+            
+            .output-area { min-height: 120px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <h1>🎨 Unified AI Studio</h1>
+    <p>Text • Image • Video Generation — Powered by Wan2GP + mmgp on Kaggle GPUs</p>
+    <div class="badges">
+        <span class="badge">⚡ Krea-2 Turbo 12B</span>
+        <span class="badge">🎬 LTX-2.3 22B</span>
+        <span class="badge">💬 Qwen 35B MoE</span>
+        <span class="badge">🔓 Uncensored</span>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- MODEL MANAGER -->
+    <div class="manager">
+        <div class="manager-header" onclick="this.nextElementSibling.classList.toggle('active')">
+            <span>⚙️ Model & LoRA Manager — Add new models on the fly</span>
+            <span>▼</span>
+        </div>
+        <div class="manager-content">
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px;">
+                Paste a Civitai or HuggingFace download link. It will auto-download and appear in your dropdowns.
+            </p>
+            <div class="manager-grid">
+                <input type="text" id="reg-url" placeholder="Download URL (e.g., https://civitai.com/api/download/models/...)">
+                <input type="text" id="reg-name" placeholder="Friendly Name (e.g., Anime Style)">
+                <select id="reg-type">
+                    <option value="lora">LoRA</option>
+                    <option value="model">Base Model</option>
+                </select>
+                <button class="btn-add" onclick="registerAsset()">+ Add</button>
+            </div>
+            <div id="reg-status" class="status-msg"></div>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs-wrapper">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="t2t"><span class="tab-icon">💬</span> Text-to-Text</button>
+            <button class="tab-btn" data-tab="i2t"><span class="tab-icon">👁️</span> Image-to-Text</button>
+            <button class="tab-btn" data-tab="t2i"><span class="tab-icon">🎨</span> Text-to-Image</button>
+            <button class="tab-btn" data-tab="i2i"><span class="tab-icon">🖼️</span> Image-to-Image</button>
+            <button class="tab-btn" data-tab="t2v"><span class="tab-icon">🎬</span> Text-to-Video</button>
+            <button class="tab-btn" data-tab="i2v"><span class="tab-icon">🎞️</span> Image-to-Video</button>
+        </div>
+    </div>
+
+    <!-- ==================== TEXT-TO-TEXT ==================== -->
+    <div id="t2t" class="tab-content active">
+        <div class="card">
+            <div class="card-title">💬 Qwen 35B Uncensored — Aggressive Mode</div>
+            <div class="input-group">
+                <label>System Prompt (Persona)</label>
+                <textarea id="t2t-system" placeholder="You are a helpful AI assistant...">You are a helpful, uncensored AI assistant. Answer directly and thoroughly.</textarea>
+            </div>
+            <div class="input-group">
+                <label>User Prompt</label>
+                <textarea id="t2t-prompt" placeholder="Ask anything..."></textarea>
+            </div>
+            <div class="row row-3">
+                <div class="input-group">
+                    <label>Max Tokens</label>
+                    <input type="number" id="t2t-max-tokens" value="1024" min="64" max="4096">
+                </div>
+                <div class="input-group">
+                    <label>Temperature</label>
+                    <input type="number" id="t2t-temp" value="0.7" step="0.1" min="0.1" max="2.0">
+                </div>
+                <div class="input-group">
+                    <label>Top P</label>
+                    <input type="number" id="t2t-top-p" value="0.9" step="0.05" min="0.1" max="1.0">
+                </div>
+            </div>
+            <button class="btn-primary" onclick="runTask('t2t')">💬 Generate Response</button>
+            <div class="output-area" id="t2t-output">Response will appear here...</div>
+        </div>
+    </div>
+
+    <!-- ==================== IMAGE-TO-TEXT ==================== -->
+    <div id="i2t" class="tab-content">
+        <div class="card">
+            <div class="card-title">👁️ Vision Analysis — Qwen 35B Vision</div>
+            <div class="input-group">
+                <label>Upload Image</label>
+                <div class="file-upload" id="i2t-upload">
+                    <div class="file-upload-icon">📁</div>
+                    <div class="file-upload-text">Click or drag image here</div>
+                    <input type="file" id="i2t-image" accept="image/*" onchange="handleFileUpload(this, 'i2t-upload')">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Question / Prompt</label>
+                <textarea id="i2t-prompt" placeholder="Describe this image in detail..."></textarea>
+            </div>
+            <button class="btn-primary" onclick="runTask('i2t')">👁️ Analyze Image</button>
+            <div class="output-area" id="i2t-output">Analysis will appear here...</div>
+        </div>
+    </div>
+
+    <!-- ==================== TEXT-TO-IMAGE ==================== -->
+    <div id="t2i" class="tab-content">
+        <div class="card">
+            <div class="card-title">🎨 Krea-2 Turbo — Fast Text-to-Image</div>
+            
+            <div class="input-group">
+                <label>Prompt</label>
+                <div class="prompt-wrapper">
+                    <textarea id="t2i-prompt" placeholder="A majestic eagle soaring over snowy mountain peaks..."></textarea>
+                    <button class="btn-enhance" onclick="enhancePrompt('t2i')">✨ Enhance</button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Style Preset</label>
+                <div class="style-presets" data-target="t2i">
+                    <div class="style-chip active" data-style="None">None</div>
+                    <div class="style-chip" data-style="Cinematic">🎬 Cinematic</div>
+                    <div class="style-chip" data-style="Photographic">📷 Photographic</div>
+                    <div class="style-chip" data-style="Anime">🎌 Anime</div>
+                    <div class="style-chip" data-style="Cyberpunk">🌃 Cyberpunk</div>
+                    <div class="style-chip" data-style="Fantasy">🐉 Fantasy</div>
+                </div>
+            </div>
+
+            <div class="row row-2">
+                <div class="input-group">
+                    <label>Base Model</label>
+                    <select id="t2i-model"></select>
+                </div>
+                <div class="input-group">
+                    <label>LoRA</label>
+                    <select id="t2i-lora"></select>
+                </div>
+            </div>
+
+            <div class="row row-3">
+                <div class="input-group">
+                    <label>Resolution</label>
+                    <select id="t2i-res">
+                        <option value="1024">1024px (Standard)</option>
+                        <option value="1536">1536px (High)</option>
+                        <option value="2048">2048px (2K Ultra)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Aspect Ratio</label>
+                    <select id="t2i-ar">
+                        <option value="16:9">16:9 Landscape</option>
+                        <option value="9:16">9:16 Portrait</option>
+                        <option value="1:1" selected>1:1 Square</option>
+                        <option value="4:3">4:3 Standard</option>
+                        <option value="3:4">3:4 Portrait</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Steps</label>
+                    <input type="number" id="t2i-steps" value="8" min="1" max="12">
+                </div>
+            </div>
+
+            <div class="row row-3">
+                <div class="input-group">
+                    <label>Number of Images</label>
+                    <input type="number" id="t2i-num" value="1" min="1" max="4">
+                </div>
+                <div class="input-group">
+                    <label>Seed (-1 = Random)</label>
+                    <input type="number" id="t2i-seed" value="-1">
+                </div>
+                <div class="input-group">
+                    <label>Enhance Prompt</label>
+                    <select id="t2i-enhance">
+                        <option value="true" selected>Yes (Auto-enhance)</option>
+                        <option value="false">No (Raw prompt)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="accordion">
+                <div class="accordion-header" onclick="this.nextElementSibling.classList.toggle('active')">
+                    <span>⚙️ Advanced Settings</span><span>▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="input-group">
+                        <label>Negative Prompt</label>
+                        <textarea id="t2i-neg" placeholder="low quality, blurry, distorted, bad anatomy...">low quality, blurry, distorted, bad proportions, bad anatomy</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="runTask('t2i')">✨ Generate Image(s)</button>
+            <div class="output-area" id="t2i-output">Generated images will appear here...</div>
+        </div>
+    </div>
+
+    <!-- ==================== IMAGE-TO-IMAGE ==================== -->
+    <div id="i2i" class="tab-content">
+        <div class="card">
+            <div class="card-title">🖼️ Krea-2 Turbo — Image Transformation</div>
+            <div class="input-group">
+                <label>Start Image</label>
+                <div class="file-upload" id="i2i-upload">
+                    <div class="file-upload-icon">📁</div>
+                    <div class="file-upload-text">Click or drag image here</div>
+                    <input type="file" id="i2i-image" accept="image/*" onchange="handleFileUpload(this, 'i2i-upload')">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Transformation Prompt</label>
+                <div class="prompt-wrapper">
+                    <textarea id="i2i-prompt" placeholder="Turn this into a cyberpunk cityscape..."></textarea>
+                    <button class="btn-enhance" onclick="enhancePrompt('i2i')">✨ Enhance</button>
+                </div>
+            </div>
+            <div class="row row-2">
+                <div class="input-group">
+                    <label>LoRA</label>
+                    <select id="i2i-lora"></select>
+                </div>
+                <div class="input-group">
+                    <label>Steps</label>
+                    <input type="number" id="i2i-steps" value="8" min="1" max="12">
+                </div>
+            </div>
+            <button class="btn-primary" onclick="runTask('i2i')">🎨 Transform Image</button>
+            <div class="output-area" id="i2i-output">Result will appear here...</div>
+        </div>
+    </div>
+
+    <!-- ==================== TEXT-TO-VIDEO ==================== -->
+    <div id="t2v" class="tab-content">
+        <div class="card">
+            <div class="card-title">🎬 LTX-2.3 22B — Text-to-Video</div>
+            <div class="input-group">
+                <label>Video Prompt</label>
+                <textarea id="t2v-prompt" placeholder="A majestic eagle soaring over snowy mountain peaks at golden hour, cinematic, 4K..."></textarea>
+            </div>
+
+            <div class="row row-3">
+                <div class="input-group">
+                    <label>Duration</label>
+                    <select id="t2v-duration">
+                        <option value="49">2s (49 frames)</option>
+                        <option value="73">3s (73 frames)</option>
+                        <option value="121" selected>5s (121 frames)</option>
+                        <option value="193">8s (193 frames)</option>
+                        <option value="241">10s (241 frames)</option>
+                        <option value="361">15s (361 frames)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Resolution</label>
+                    <select id="t2v-res">
+                        <option value="1080p">1080p</option>
+                        <option value="720p" selected>720p</option>
+                        <option value="540p">540p</option>
+                        <option value="480p">480p</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Aspect Ratio</label>
+                    <select id="t2v-ar">
+                        <option value="16:9" selected>16:9 Landscape</option>
+                        <option value="4:3">4:3 Standard</option>
+                        <option value="1:1">1:1 Square</option>
+                        <option value="3:4">3:4 Portrait</option>
+                        <option value="9:16">9:16 Portrait</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row row-3">
+                <div class="input-group">
+                    <label>Guide Scale</label>
+                    <input type="number" id="t2v-guide" value="3.0" step="0.5" min="1.0" max="8.0">
+                </div>
+                <div class="input-group">
+                    <label>Steps</label>
+                    <input type="number" id="t2v-steps" value="8" min="2" max="8">
+                </div>
+                <div class="input-group">
+                    <label>Seed (-1 = Random)</label>
+                    <input type="number" id="t2v-seed" value="-1">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>LoRA</label>
+                <select id="t2v-lora"></select>
+            </div>
+
+            <button class="btn-primary" onclick="runTask('t2v')">🎬 Generate Video</button>
+            <div class="output-area" id="t2v-output">Generated video will appear here...</div>
+        </div>
+    </div>
+
+    <!-- ==================== IMAGE-TO-VIDEO ==================== -->
+    <div id="i2v" class="tab-content">
+        <div class="card">
+            <div class="card-title">🎞️ LTX-2.3 22B — Image-to-Video (First & Last Frame)</div>
+            
+            <div class="row row-2">
+                <div class="input-group">
+                    <label>🎬 Start Frame (First Frame)</label>
+                    <div class="file-upload" id="i2v-start-upload">
+                        <div class="file-upload-icon">🖼️</div>
+                        <div class="file-upload-text">Click to upload start image</div>
+                        <input type="file" id="i2v-start" accept="image/*" onchange="handleFileUpload(this, 'i2v-start-upload')">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>🎬 End Frame (Optional)</label>
+                    <div class="file-upload" id="i2v-end-upload">
+                        <div class="file-upload-icon">🖼️</div>
+                        <div class="file-upload-text">Click to upload end image</div>
+                        <input type="file" id="i2v-end" accept="image/*" onchange="handleFileUpload(this, 'i2v-end-upload')">
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Motion Prompt</label>
+                <textarea id="i2v-prompt" placeholder="Camera slowly zooms in, leaves blowing in the wind, cinematic lighting..."></textarea>
+            </div>
+
+            <div class="row row-3">
+                <div class="input-group">
+                    <label>Duration</label>
+                    <select id="i2v-duration">
+                        <option value="49">2s (49 frames)</option>
+                        <option value="73">3s (73 frames)</option>
+                        <option value="121" selected>5s (121 frames)</option>
+                        <option value="193">8s (193 frames)</option>
+                        <option value="241">10s (241 frames)</option>
+                        <option value="361">15s (361 frames)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Resolution</label>
+                    <select id="i2v-res">
+                        <option value="1080p">1080p</option>
+                        <option value="720p" selected>720p</option>
+                        <option value="540p">540p</option>
+                        <option value="480p">480p</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Aspect Ratio</label>
+                    <select id="i2v-ar">
+                        <option value="16:9" selected>16:9 Landscape</option>
+                        <option value="4:3">4:3 Standard</option>
+                        <option value="1:1">1:1 Square</option>
+                        <option value="3:4">3:4 Portrait</option>
+                        <option value="9:16">9:16 Portrait</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row row-3">
+                <div class="input-group">
+                    <label>Guide Scale</label>
+                    <input type="number" id="i2v-guide" value="3.0" step="0.5" min="1.0" max="8.0">
+                </div>
+                <div class="input-group">
+                    <label>Steps</label>
+                    <input type="number" id="i2v-steps" value="8" min="2" max="8">
+                </div>
+                <div class="input-group">
+                    <label>Seed (-1 = Random)</label>
+                    <input type="number" id="i2v-seed" value="-1">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>LoRA</label>
+                <select id="i2v-lora"></select>
+            </div>
+
+            <button class="btn-primary" onclick="runTask('i2v')">🎬 Animate Image(s)</button>
+            <div class="output-area" id="i2v-output">Generated video will appear here...</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    <p>🎨 Free & Open Source Unified AI Studio</p>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast">
+    <span id="toast-icon">✅</span>
+    <span id="toast-msg">Success!</span>
+</div>
+
+<script>
+    // ==========================================
+    // API CONFIGURATION - YOUR EXACT NGROK DOMAINS
+    // ==========================================
+    const API = {
+        t2t: "https://coroner-relock-wrath.ngrok-free.dev",
+        i2t: "https://coroner-relock-wrath.ngrok-free.dev",
+        t2i: "https://concrete-gossip-outpost.ngrok-free.dev",
+        i2i: "https://concrete-gossip-outpost.ngrok-free.dev",
+        t2v: "https://satin-keep-cupping.ngrok-free.dev",
+        i2v: "https://satin-keep-cupping.ngrok-free.dev"
+    };
+
+    // ==========================================
+    // TAB SWITCHING
+    // ==========================================
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.tab).classList.add('active');
+        });
+    });
+
+    // ==========================================
+    // STYLE PRESET CHIPS
+    // ==========================================
+    document.querySelectorAll('.style-presets').forEach(container => {
+        container.querySelectorAll('.style-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                container.querySelectorAll('.style-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+            });
+        });
+    });
+
+    // ==========================================
+    // FILE UPLOAD HANDLER
+    // ==========================================
+    function handleFileUpload(input, uploadId) {
+        const uploadDiv = document.getElementById(uploadId);
+        if (input.files && input.files[0]) {
+            uploadDiv.classList.add('has-file');
+            uploadDiv.querySelector('.file-upload-text').textContent = '✅ ' + input.files[0].name;
+        }
+    }
+
+    // ==========================================
+    // PROMPT ENHANCER
+    // ==========================================
+    const STYLE_MODIFIERS = {
+        "Cinematic": "cinematic lighting, dramatic shadows, 8k resolution, highly detailed, film grain, masterpiece",
+        "Photographic": "professional photography, 35mm lens, f/2.8, depth of field, natural lighting, highly detailed, photorealistic",
+        "Anime": "anime key visual, vibrant color palette, clean line art, highly detailed digital illustration, masterpiece",
+        "Cyberpunk": "cyberpunk aesthetic, glowing neon lights, futuristic city streets, volumetric smoke, high contrast, ray tracing",
+        "Fantasy": "mythical fantasy landscape, glowing magical particles, ethereal light, whimsical details, digital painting, masterpiece"
+    };
+
+    function enhancePrompt(taskId) {
+        const textarea = document.getElementById(`${taskId}-prompt`);
+        let prompt = textarea.value.trim();
+        if (!prompt) return;
+        
+        const container = document.querySelector(`.style-presets[data-target="${taskId}"]`);
+        const activeStyle = container ? container.querySelector('.style-chip.active').dataset.style : 'None';
+        
+        const lower = prompt.toLowerCase();
+        let enhancement = "";
+        
+        if (lower.match(/person|woman|man|girl|boy|portrait|face|model/)) {
+            enhancement = "captured on 85mm lens, f/1.8, natural skin texture, realistic catchlights in eyes, professional studio lighting, depth of field, stunning portrait, highly detailed, 8k";
+        } else if (lower.match(/cyberpunk|futuristic|sci-fi|robot|spaceship|neon/)) {
+            enhancement = "cyberpunk aesthetic, neon glow, wet pavement with reflections, volumetric fog, high-tech details, dark moody atmosphere, cinematic lighting, ray tracing, 8k resolution";
+        } else if (lower.match(/forest|mountain|ocean|nature|landscape|sunset/)) {
+            enhancement = "golden hour sunset lighting, national geographic style, epic scale, volumetric mist, wide-angle lens, breathtaking scenery, sharp focus, highly detailed, 8k";
+        } else if (lower.match(/dragon|magic|wizard|elf|fairy|castle|fantasy/)) {
+            enhancement = "mythical atmosphere, glowing magical particles, ethereal light, highly detailed fantasy illustration, masterpiece, epic scale, whimsical, digital painting, 8k";
+        } else if (lower.match(/anime|illustration|drawing|painting|art/)) {
+            enhancement = "stunning digital painting, vibrant color palette, highly detailed illustration, clean line art, beautiful lighting, anime key visual style, masterpiece";
+        } else {
+            enhancement = "highly detailed, photorealistic, cinematic lighting, masterpiece, stunning visual, sharp focus, 8k resolution, intricate textures";
+        }
+        
+        if (activeStyle !== 'None' && STYLE_MODIFIERS[activeStyle]) {
+            enhancement = `${enhancement}, ${STYLE_MODIFIERS[activeStyle]}`;
+        }
+        
+        if (!prompt.includes(enhancement.substring(0, 30))) {
+            textarea.value = `${prompt}, ${enhancement}`;
+        }
+        showToast('✨', 'Prompt enhanced!');
+    }
+
+    // ==========================================
+    // TOAST NOTIFICATIONS
+    // ==========================================
+    function showToast(icon, msg) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-icon').textContent = icon;
+        document.getElementById('toast-msg').textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // ==========================================
+    // LOAD ASSETS
+    // ==========================================
+    async function loadAssets() {
+        try {
+            const kreaUrl = API.t2i;
+            const res = await fetch(`${kreaUrl}/list_assets`);
+            const data = await res.json();
+            
+            if (data.models) {
+                document.getElementById('t2i-model').innerHTML = data.models.map(m => `<option value="${m}">${m}</option>`).join('');
+            }
+            if (data.loras) {
+                ['t2i-lora', 'i2i-lora', 't2v-lora', 'i2v-lora'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerHTML = data.loras.map(l => `<option value="${l}">${l}</option>`).join('');
+                });
+            }
+        } catch (e) {
+            console.warn("Could not load assets", e);
+        }
+    }
+
+    // ==========================================
+    // REGISTER NEW ASSET
+    // ==========================================
+    async function registerAsset() {
+        const url = document.getElementById('reg-url').value.trim();
+        const name = document.getElementById('reg-name').value.trim();
+        const type = document.getElementById('reg-type').value;
+        const status = document.getElementById('reg-status');
+        
+        if (!url || !name) {
+            status.innerHTML = '<span style="color:var(--error)">❌ Please provide URL and Name.</span>';
+            return;
+        }
+        
+        status.innerHTML = '<span class="loading"><span class="spinner"></span>Downloading... This may take a minute.</span>';
+        
+        try {
+            const formData = new FormData();
+            formData.append('url', url);
+            formData.append('name', name);
+            formData.append('asset_type', type);
+            
+            const res = await fetch(`${API.t2i}/register`, { method: 'POST', body: formData });
+            const data = await res.json();
+            
+            if (data.status === 'success') {
+                status.innerHTML = `<span style="color:var(--success)">✅ ${data.message}</span>`;
+                document.getElementById('reg-url').value = '';
+                document.getElementById('reg-name').value = '';
+                setTimeout(loadAssets, 1000);
+                showToast('✅', 'Asset added successfully!');
+            } else {
+                status.innerHTML = `<span style="color:var(--error)">❌ ${data.message}</span>`;
+            }
+        } catch (e) {
+            status.innerHTML = `<span style="color:var(--error)">❌ Network Error: ${e.message}</span>`;
+        }
+    }
+
+    // ==========================================
+    // TASK EXECUTION
+    // ==========================================
+    async function runTask(taskId) {
+        const outputDiv = document.getElementById(`${taskId}-output`);
+        const btn = event.target;
+        
+        outputDiv.innerHTML = '<span class="loading"><span class="spinner"></span>Processing on GPU... This may take 1-5 minutes.</span>';
+        btn.disabled = true;
+
+        try {
+            let payload = new FormData();
+            const baseUrl = API[taskId];
+            
+            if (taskId === 't2t') {
+                payload.append('system_prompt', document.getElementById('t2t-system').value);
+                payload.append('prompt', document.getElementById('t2t-prompt').value);
+                payload.append('max_tokens', document.getElementById('t2t-max-tokens').value);
+                payload.append('temperature', document.getElementById('t2t-temp').value);
+                payload.append('top_p', document.getElementById('t2t-top-p').value);
+            }
+            else if (taskId === 'i2t') {
+                payload.append('image', document.getElementById('i2t-image').files[0]);
+                payload.append('prompt', document.getElementById('i2t-prompt').value || 'Describe this image in detail.');
+            }
+            else if (taskId === 't2i') {
+                const activeStyle = document.querySelector('.style-presets[data-target="t2i"] .style-chip.active').dataset.style;
+                payload.append('prompt', document.getElementById('t2i-prompt').value);
+                payload.append('style_preset', activeStyle);
+                payload.append('negative_prompt', document.getElementById('t2i-neg').value);
+                payload.append('resolution', document.getElementById('t2i-res').value);
+                payload.append('aspect_ratio', document.getElementById('t2i-ar').value);
+                payload.append('steps', document.getElementById('t2i-steps').value);
+                payload.append('num_images', document.getElementById('t2i-num').value);
+                payload.append('seed', document.getElementById('t2i-seed').value);
+                payload.append('enhance_prompt', document.getElementById('t2i-enhance').value);
+                payload.append('model_name', document.getElementById('t2i-model').value);
+                payload.append('lora_name', document.getElementById('t2i-lora').value);
+            }
+            else if (taskId === 'i2i') {
+                payload.append('prompt', document.getElementById('i2i-prompt').value);
+                payload.append('start_image', document.getElementById('i2i-image').files[0]);
+                payload.append('steps', document.getElementById('i2i-steps').value);
+                payload.append('lora_name', document.getElementById('i2i-lora').value);
+            }
+            else if (taskId === 't2v') {
+                payload.append('prompt', document.getElementById('t2v-prompt').value);
+                payload.append('duration', document.getElementById('t2v-duration').value);
+                payload.append('resolution', document.getElementById('t2v-res').value);
+                payload.append('aspect_ratio', document.getElementById('t2v-ar').value);
+                payload.append('guide_scale', document.getElementById('t2v-guide').value);
+                payload.append('steps', document.getElementById('t2v-steps').value);
+                payload.append('seed', document.getElementById('t2v-seed').value);
+                payload.append('lora_name', document.getElementById('t2v-lora').value);
+            }
+            else if (taskId === 'i2v') {
+                payload.append('prompt', document.getElementById('i2v-prompt').value);
+                payload.append('image_start', document.getElementById('i2v-start').files[0]);
+                const endFile = document.getElementById('i2v-end').files[0];
+                if (endFile) payload.append('image_end', endFile);
+                payload.append('duration', document.getElementById('i2v-duration').value);
+                payload.append('resolution', document.getElementById('i2v-res').value);
+                payload.append('aspect_ratio', document.getElementById('i2v-ar').value);
+                payload.append('guide_scale', document.getElementById('i2v-guide').value);
+                payload.append('steps', document.getElementById('i2v-steps').value);
+                payload.append('seed', document.getElementById('i2v-seed').value);
+                payload.append('lora_name', document.getElementById('i2v-lora').value);
+            }
+
+            const response = await fetch(`${baseUrl}/generate`, { method: 'POST', body: payload });
+            const data = await response.json();
+
+            if (data.error) throw new Error(data.error);
+
+            if (['t2t', 'i2t'].includes(taskId)) {
+                outputDiv.innerHTML = `<pre>${data.result_text || data.message || "Generation complete."}</pre>`;
+            }
+            else if (['t2i', 'i2i'].includes(taskId)) {
+                if (data.result_urls && Array.isArray(data.result_urls)) {
+                    outputDiv.innerHTML = `<div class="gallery">${data.result_urls.map(url => `<img src="${baseUrl}${url}" alt="Generated">`).join('')}</div>`;
+                } else {
+                    outputDiv.innerHTML = `<img src="${baseUrl}${data.result_url}" alt="Generated">`;
+                }
+            }
+            else if (['t2v', 'i2v'].includes(taskId)) {
+                outputDiv.innerHTML = `<video controls autoplay loop src="${baseUrl}${data.result_url}"></video>`;
+            }
+            
+            showToast('✅', 'Generation complete!');
+        } catch (error) {
+            outputDiv.innerHTML = `<span style="color: var(--error);">❌ Error: ${error.message}</span>`;
+            showToast('❌', 'Generation failed');
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    // Initialize
+    window.onload = loadAssets;
+</script>
+</body>
+</html>
