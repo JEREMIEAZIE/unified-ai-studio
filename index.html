@@ -3,659 +3,481 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAINT SILK - AI Studio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <title>SAINT SILK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-tertiary: #1a1a25;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0b0;
-            --border-color: #2a2a3a;
-            --accent-pink: #ff00ff;
-            --accent-purple: #bf00ff;
-            --accent-cyan: #00ffff;
-            --gradient-primary: linear-gradient(135deg, #ff00ff 0%, #bf00ff 50%, #00ffff 100%);
-            --gradient-metallic: linear-gradient(135deg, #e0e0e0 0%, #ffffff 25%, #c0c0c0 50%, #ffffff 75%, #e0e0e0 100%);
-            --shadow-glow: 0 0 30px rgba(255, 0, 255, 0.3);
-            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5);
-            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --bg-app: #09090b;
+            --bg-sidebar: #121214;
+            --bg-panel: #18181b;
+            --bg-input: #27272a;
+            --border: #27272a;
+            --text-main: #fafafa;
+            --text-muted: #a1a1aa;
+            --accent: #8b5cf6;
+            --accent-hover: #7c3aed;
+            --radius: 8px;
+            --font-sans: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
-            background-image: 
-                radial-gradient(circle at 20% 50%, rgba(255, 0, 255, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(0, 255, 255, 0.05) 0%, transparent 50%);
-        }
-
-        /* Typography */
-        h1, h2, h3, h4 {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            background: var(--gradient-metallic);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            filter: drop-shadow(0 0 10px rgba(255, 0, 255, 0.5));
-        }
-        h1 { font-size: 2.5rem; }
-        h2 { font-size: 2rem; }
-        h3 { font-size: 1.5rem; }
-
-        /* Animations */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--accent-pink), var(--accent-purple)); border-radius: 3px; }
-
-        /* Sidebar */
-        .sidebar {
-            width: 280px; background: var(--bg-secondary); border-right: 1px solid var(--border-color);
-            display: flex; flex-direction: column; padding: 24px; flex-shrink: 0;
-        }
-        .logo { margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid var(--border-color); text-align: center; }
-        .logo img { width: 100%; max-width: 220px; filter: drop-shadow(0 0 20px rgba(255, 0, 255, 0.4)); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-sans); background: var(--bg-app); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; }
         
-        .nav-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 2px; margin-bottom: 12px; padding-left: 12px; }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text-secondary); transition: var(--transition-smooth); margin-bottom: 6px; }
-        .nav-item:hover { background: var(--bg-tertiary); color: var(--text-primary); transform: translateX(4px); }
-        .nav-item.active { background: linear-gradient(135deg, rgba(255, 0, 255, 0.15), rgba(191, 0, 255, 0.15)); color: var(--accent-pink); border: 1px solid var(--accent-pink); }
-        .nav-item svg { width: 18px; height: 18px; }
+        .sidebar { width: 260px; background: var(--bg-sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 16px; flex-shrink: 0; }
+        .main { flex: 1; display: flex; flex-direction: column; position: relative; }
+        .content { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; }
+        .input-area { padding: 16px 24px 24px; background: var(--bg-app); border-top: 1px solid var(--border); }
+
+        .brand { display: flex; align-items: center; gap: 12px; padding: 12px; margin-bottom: 24px; }
+        .brand img { width: 32px; height: 32px; border-radius: 6px; }
+        .brand-name { font-weight: 700; font-size: 15px; letter-spacing: 0.5px; }
         
-        .recent-chats { flex: 1; overflow-y: auto; }
-        .chat-item { padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: var(--transition-smooth); }
-        .chat-item:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-        .chat-item.active { background: linear-gradient(135deg, rgba(255, 0, 255, 0.15), rgba(191, 0, 255, 0.15)); color: var(--accent-pink); }
+        .nav-group { margin-bottom: 24px; }
+        .nav-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 0 12px; margin-bottom: 8px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius); cursor: pointer; color: var(--text-muted); font-size: 14px; font-weight: 500; transition: all 0.2s; margin-bottom: 2px; position: relative; }
+        .nav-item:hover { background: var(--bg-panel); color: var(--text-main); }
+        .nav-item.active { background: var(--bg-panel); color: var(--text-main); }
+        .nav-item.active::before { content: ''; position: absolute; left: 0; width: 3px; height: 20px; background: var(--accent); border-radius: 0 4px 4px 0; }
+        .nav-item svg { width: 16px; height: 16px; stroke-width: 2; }
 
-        /* Main Content */
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .header { padding: 20px 40px; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
-        .header-title { font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 900; background: var(--gradient-metallic); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; letter-spacing: 2px; }
-        .header-actions { display: flex; gap: 12px; }
+        .chat-list { flex: 1; overflow-y: auto; }
+        .chat-item { padding: 10px 12px; border-radius: var(--radius); cursor: pointer; font-size: 13px; color: var(--text-muted); transition: background 0.2s; margin-bottom: 2px; }
+        .chat-item:hover { background: var(--bg-panel); color: var(--text-main); }
+        .chat-item.active { background: var(--bg-panel); color: var(--text-main); border-left: 3px solid var(--accent); }
 
-        .btn { padding: 10px 20px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; transition: var(--transition-smooth); display: inline-flex; align-items: center; gap: 8px; font-family: 'Inter', sans-serif; }
-        .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
-        .btn-secondary:hover { background: var(--border-color); transform: translateY(-2px); }
-        .btn-primary { background: var(--gradient-primary); color: white; box-shadow: 0 4px 15px rgba(255, 0, 255, 0.3); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(255, 0, 255, 0.5); }
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .content-area { flex: 1; overflow-y: auto; padding: 40px; display: flex; flex-direction: column; }
-
-        /* Chat Interface */
-        .chat-container { max-width: 900px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; height: 100%; }
-        .chat-messages { flex: 1; overflow-y: auto; padding: 20px 0; display: flex; flex-direction: column; gap: 20px; }
-        .message { display: flex; gap: 14px; max-width: 85%; animation: fadeIn 0.4s ease; }
-        .message.user { align-self: flex-end; flex-direction: row-reverse; }
-        .message-avatar { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 14px; background: var(--gradient-metallic); -webkit-text-fill-color: transparent; border: 1px solid var(--border-color); }
-        .message.user .message-avatar { background: var(--gradient-primary); -webkit-text-fill-color: white; box-shadow: 0 0 20px rgba(255, 0, 255, 0.4); }
-        .message-content { padding: 14px 18px; border-radius: 14px; line-height: 1.6; font-size: 15px; background: var(--bg-secondary); border: 1px solid var(--border-color); }
-        .message.user .message-content { background: var(--gradient-primary); color: white; border-bottom-right-radius: 4px; }
-        .message-content pre { background: var(--bg-primary); padding: 14px; border-radius: 8px; overflow-x: auto; margin: 10px 0; font-size: 13px; }
-        .message-content img, .message-content video { max-width: 100%; border-radius: 10px; margin: 10px 0; }
-
-        /* Input Area & Dropdown */
-        .input-area { padding: 24px 40px; background: var(--bg-secondary); border-top: 1px solid var(--border-color); }
-        .input-wrapper { max-width: 900px; margin: 0 auto; }
+        .view { display: none; max-width: 800px; margin: 0 auto; width: 100%; flex: 1; }
+        .view.active { display: flex; flex-direction: column; }
         
-        .mode-dropdown {
-            width: 100%; padding: 12px 16px; margin-bottom: 16px;
-            background: var(--bg-tertiary); color: var(--text-primary);
-            border: 1px solid var(--border-color); border-radius: 10px;
-            font-size: 14px; font-family: 'Inter', sans-serif; font-weight: 600;
-            cursor: pointer; outline: none; transition: var(--transition-smooth);
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ff00ff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat; background-position: right 16px top 50%; background-size: 12px auto;
-        }
-        .mode-dropdown:focus { border-color: var(--accent-pink); box-shadow: 0 0 0 3px rgba(255, 0, 255, 0.1); }
-        .mode-dropdown option { background: var(--bg-secondary); color: var(--text-primary); padding: 10px; }
+        .messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding-bottom: 24px; }
+        .msg { display: flex; gap: 16px; animation: fadeIn 0.3s ease; }
+        .msg.user { flex-direction: row-reverse; }
+        .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--bg-panel); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; border: 1px solid var(--border); }
+        .msg.user .avatar { background: var(--accent); color: white; border: none; }
+        .bubble { padding: 12px 16px; border-radius: 12px; font-size: 15px; line-height: 1.6; max-width: 85%; word-wrap: break-word; }
+        .msg.assistant .bubble { background: var(--bg-panel); border: 1px solid var(--border); }
+        .msg.user .bubble { background: var(--accent); color: white; }
+        .bubble pre { background: var(--bg-app); padding: 12px; border-radius: 6px; overflow-x: auto; margin: 8px 0; font-family: var(--font-mono); font-size: 13px; }
 
-        .chat-input-container { position: relative; display: flex; gap: 12px; align-items: flex-end; }
-        .chat-input { flex: 1; padding: 16px 120px 16px 20px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 15px; font-family: 'Inter', sans-serif; resize: none; outline: none; transition: var(--transition-smooth); background: var(--bg-tertiary); color: var(--text-primary); min-height: 56px; }
-        .chat-input:focus { border-color: var(--accent-pink); box-shadow: 0 0 0 3px rgba(255, 0, 255, 0.1); background: var(--bg-primary); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; }
+        .form-input, .form-select, .form-textarea { width: 100%; padding: 10px 12px; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-main); font-family: var(--font-sans); font-size: 14px; outline: none; transition: border-color 0.2s; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+        .form-textarea { min-height: 80px; resize: vertical; }
         
-        .input-actions { position: absolute; right: 12px; bottom: 12px; display: flex; gap: 8px; }
-        .icon-btn { width: 36px; height: 36px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition-smooth); }
-        .icon-btn:hover { background: var(--border-color); color: var(--accent-pink); }
-        .send-btn { width: 36px; height: 36px; background: var(--gradient-primary); border: none; border-radius: 8px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition-smooth); }
-        .send-btn:hover { transform: scale(1.1); }
+        .result-box { margin-top: 24px; padding: 24px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; min-height: 200px; display: flex; align-items: center; justify-content: center; }
+        .result-box img, .result-box video { max-width: 100%; border-radius: 8px; }
 
-        /* Generation Forms */
-        .gen-form { max-width: 900px; margin: 0 auto; width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 16px; padding: 36px; }
-        .form-group { margin-bottom: 20px; }
-        .form-label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; color: var(--text-secondary); }
-        .form-input, .form-select, .form-textarea { width: 100%; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 14px; font-family: 'Inter', sans-serif; background: var(--bg-tertiary); color: var(--text-primary); transition: var(--transition-smooth); }
-        .form-textarea { min-height: 100px; resize: vertical; }
-        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--accent-pink); box-shadow: 0 0 0 3px rgba(255, 0, 255, 0.1); }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        
-        .result-area { margin-top: 28px; padding: 28px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 12px; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-secondary); position: relative; }
-        .result-area img, .result-area video { max-width: 100%; border-radius: 10px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); }
-        .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; width: 100%; }
-        .gallery img { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; cursor: pointer; transition: var(--transition-smooth); border: 2px solid transparent; }
-        .gallery img:hover { transform: translateY(-4px) scale(1.02); border-color: var(--accent-pink); }
+        .input-wrapper { max-width: 800px; margin: 0 auto; position: relative; }
+        .input-box { width: 100%; padding: 14px 48px 14px 16px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: var(--text-main); font-size: 15px; font-family: var(--font-sans); resize: none; outline: none; min-height: 52px; max-height: 200px; transition: border-color 0.2s; }
+        .input-box:focus { border-color: var(--accent); }
+        .send-btn { position: absolute; right: 12px; bottom: 12px; width: 32px; height: 32px; background: var(--accent); border: none; border-radius: 6px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .send-btn:hover { background: var(--accent-hover); }
+        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .input-hint { text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 8px; }
 
-        .edit-btn { margin-top: 16px; padding: 10px 20px; background: var(--bg-secondary); border: 1px solid var(--accent-pink); color: var(--accent-pink); border-radius: 8px; cursor: pointer; font-weight: 600; transition: var(--transition-smooth); display: flex; align-items: center; gap: 8px; }
-        .edit-btn:hover { background: var(--accent-pink); color: white; box-shadow: 0 0 15px rgba(255, 0, 255, 0.4); }
-
-        /* Attached Media Preview */
-        .attached-media-chip { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: rgba(255, 0, 255, 0.1); border: 1px solid var(--accent-pink); border-radius: 8px; margin-bottom: 12px; font-size: 13px; color: var(--accent-pink); animation: fadeIn 0.3s ease; }
-        .attached-media-chip img { width: 32px; height: 32px; object-fit: cover; border-radius: 4px; }
-        .attached-media-chip button { background: none; border: none; color: var(--accent-pink); cursor: pointer; font-size: 16px; margin-left: auto; }
-
-        /* Modal */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; animation: fadeIn 0.3s ease; }
-        .modal-content { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 16px; padding: 32px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: slideIn 0.4s ease; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .modal-header h3 { margin: 0; }
-        .modal-close { background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer; transition: var(--transition-smooth); }
-        .modal-close:hover { color: var(--accent-pink); transform: rotate(90deg); }
-        .modal-media { background: var(--bg-primary); border-radius: 12px; padding: 16px; margin-bottom: 24px; display: flex; justify-content: center; align-items: center; min-height: 200px; }
-        .modal-media img, .modal-media video { max-width: 100%; max-height: 400px; border-radius: 8px; }
-        .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .modal-actions .btn { justify-content: center; padding: 14px; }
-
+        .btn { padding: 8px 16px; border-radius: var(--radius); border: none; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-ghost:hover { background: var(--bg-panel); color: var(--text-main); }
         .hidden { display: none !important; }
-        .loading-container { display: flex; align-items: center; gap: 12px; color: var(--accent-pink); font-weight: 600; }
-        .spinner { width: 20px; height: 20px; border: 2px solid rgba(255, 0, 255, 0.2); border-top-color: var(--accent-pink); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.2); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .content-area { padding: 20px; }
-            .gen-form { padding: 24px; }
-            .form-row { grid-template-columns: 1fr; }
-            .modal-actions { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 768px) { .sidebar { display: none; } .form-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
+
     <aside class="sidebar">
-        <div class="logo">
-            <img src="logo.png" alt="SAINT SILK">
+        <div class="brand">
+            <img src="logo.png" alt="Logo">
+            <div class="brand-name">SAINT SILK</div>
         </div>
-        <div class="nav-section">
-            <div class="nav-title">Create</div>
-            <div class="nav-item active" onclick="setMode('chat', this)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                <span>Chat</span>
+
+        <div class="nav-group">
+            <div class="nav-label">Workspace</div>
+            <div class="nav-item active" onclick="switchView('chat', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                Chat
             </div>
-            <div class="nav-item" onclick="setMode('image', this)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                <span>Image</span>
+            <div class="nav-item" onclick="switchView('image', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                Image
             </div>
-            <div class="nav-item" onclick="setMode('video', this)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2"></rect></svg>
-                <span>Video</span>
+            <div class="nav-item" onclick="switchView('video', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2"></rect></svg>
+                Video
             </div>
         </div>
-        <div class="recent-chats">
-            <div class="nav-title">Recent</div>
-            <div id="chat-list"></div>
+
+        <div class="nav-group" style="flex: 1; display: flex; flex-direction: column;">
+            <div class="nav-label">History</div>
+            <div class="chat-list" id="chat-list">
+                <div style="padding: 12px; color: var(--text-muted); font-size: 12px;">Loading...</div>
+            </div>
         </div>
+        
+        <button class="btn btn-ghost" style="width: 100%; justify-content: center;" onclick="newChat()">+ New Chat</button>
     </aside>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="header">
-            <div class="header-title" id="header-title">New Chat</div>
-            <div class="header-actions">
-                <button class="btn btn-secondary" onclick="clearChat()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                    Clear
-                </button>
-                <button class="btn btn-primary" onclick="newChat()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                    New Chat
-                </button>
+    <main class="main">
+        <div class="content">
+            <div id="view-chat" class="view active">
+                <div class="messages" id="chat-messages">
+                    <div style="text-align: center; margin-top: 20vh; color: var(--text-muted);">
+                        <h1 style="font-size: 24px; font-weight: 600; color: var(--text-main); margin-bottom: 8px;">How can I help you today?</h1>
+                        <p style="font-size: 14px;">Powered by Qwen 2.5 with live web crawling.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-image" class="view">
+                <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 24px;">Image Generation</h2>
+                <div class="form-group">
+                    <label class="form-label">Prompt</label>
+                    <textarea class="form-textarea" id="img-prompt" placeholder="A cinematic shot of a cyberpunk city..."></textarea>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Resolution</label>
+                        <select class="form-select" id="img-res">
+                            <option value="1024">1024px</option>
+                            <option value="1536">1536px</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Aspect Ratio</label>
+                        <select class="form-select" id="img-ar">
+                            <option value="1:1">1:1 Square</option>
+                            <option value="16:9">16:9 Landscape</option>
+                            <option value="9:16">9:16 Portrait</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="generateImage()" id="img-btn">Generate</button>
+                <div class="result-box" id="img-result">Your image will appear here.</div>
+            </div>
+
+            <div id="view-video" class="view">
+                <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 24px;">Video Generation</h2>
+                <div class="form-group">
+                    <label class="form-label">Prompt</label>
+                    <textarea class="form-textarea" id="vid-prompt" placeholder="A drone shot flying over a neon-lit ocean..."></textarea>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Duration</label>
+                        <select class="form-select" id="vid-dur">
+                            <option value="121">5s (121 frames)</option>
+                            <option value="73">3s (73 frames)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Resolution</label>
+                        <select class="form-select" id="vid-res">
+                            <option value="720p">720p HD</option>
+                            <option value="540p">540p</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="generateVideo()" id="vid-btn">Generate</button>
+                <div class="result-box" id="vid-result">Your video will appear here.</div>
             </div>
         </div>
 
-        <div class="content-area">
-            <!-- Chat Tab -->
-            <div id="chat-tab" class="tab-content">
-                <div class="chat-container">
-                    <div class="chat-messages" id="chat-messages">
-                        <div class="welcome-screen" style="text-align: center; padding: 60px 0;">
-                            <div style="width: 80px; height: 80px; margin: 0 auto 24px; background: var(--gradient-primary); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron'; font-weight: 900; font-size: 32px; color: white;">AI</div>
-                            <h1 style="margin-bottom: 12px;">Welcome to SAINT SILK</h1>
-                            <p style="color: var(--text-secondary); font-size: 16px;">Next-Generation AI Studio</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Image Tab -->
-            <div id="image-tab" class="tab-content hidden">
-                <div class="gen-form">
-                    <h2>Image Generation</h2>
-                    <div id="image-attached-preview"></div>
-                    <div class="form-group">
-                        <label class="form-label">Prompt</label>
-                        <textarea class="form-textarea" id="image-prompt" placeholder="Describe the image you want to create..."></textarea>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Resolution</label>
-                            <select class="form-select" id="image-resolution">
-                                <option value="1024">1024px (Standard)</option>
-                                <option value="1536">1536px (High)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Aspect Ratio</label>
-                            <select class="form-select" id="image-aspect">
-                                <option value="1:1">1:1 Square</option>
-                                <option value="16:9">16:9 Landscape</option>
-                                <option value="9:16">9:16 Portrait</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" style="width: 100%; padding: 14px; justify-content: center;" onclick="generateImage()" id="image-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                        Generate Image
-                    </button>
-                    <div class="result-area" id="image-result">Your creations will appear here...</div>
-                </div>
-            </div>
-
-            <!-- Video Tab -->
-            <div id="video-tab" class="tab-content hidden">
-                <div class="gen-form">
-                    <h2>Video Generation</h2>
-                    <div id="video-attached-preview"></div>
-                    <div class="form-group">
-                        <label class="form-label">Prompt</label>
-                        <textarea class="form-textarea" id="video-prompt" placeholder="Describe the video you want to create..."></textarea>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Duration</label>
-                            <select class="form-select" id="video-duration">
-                                <option value="121">5s (121 frames)</option>
-                                <option value="73">3s (73 frames)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Resolution</label>
-                            <select class="form-select" id="video-resolution">
-                                <option value="720p">720p HD</option>
-                                <option value="540p">540p</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" style="width: 100%; padding: 14px; justify-content: center;" onclick="generateVideo()" id="video-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2"></rect></svg>
-                        Generate Video
-                    </button>
-                    <div class="result-area" id="video-result">Your creations will appear here...</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Input Area with Dropdown -->
         <div class="input-area">
             <div class="input-wrapper">
-                <select id="mode-dropdown" class="mode-dropdown" onchange="setMode(this.value)">
-                    <option value="chat">💬 Chat Mode</option>
-                    <option value="image">🎨 Image Generation</option>
-                    <option value="video">🎬 Video Generation</option>
-                </select>
-                
-                <div class="chat-input-container">
-                    <textarea class="chat-input" id="chat-input" rows="1" placeholder="Message SAINT SILK..." onkeydown="handleInput(event)"></textarea>
-                    <div class="input-actions">
-                        <button class="icon-btn" onclick="document.getElementById('file-input').click()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-                        </button>
-                        <input type="file" id="file-input" style="display: none;" multiple accept="image/*" onchange="handleFileSelect(event)">
-                        <button class="send-btn" onclick="sendMessage()" id="send-btn">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                        </button>
-                    </div>
-                </div>
+                <textarea class="input-box" id="main-input" placeholder="Message SAINT SILK..." onkeydown="handleInput(event)"></textarea>
+                <button class="send-btn" onclick="handleSend()" id="send-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
             </div>
+            <div class="input-hint" id="input-hint">Chat Mode • Press Enter to send</div>
         </div>
     </main>
 
-    <!-- Edit Modal -->
-    <div id="edit-modal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Edit Creation</h3>
-                <button class="modal-close" onclick="closeModal()">×</button>
-            </div>
-            <div class="modal-media" id="modal-media-container"></div>
-            <div class="modal-actions">
-                <button class="btn btn-primary" onclick="sendToModel('image')">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle></svg>
-                    Edit with Image Model
-                </button>
-                <button class="btn btn-primary" onclick="sendToModel('video')">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2"></rect></svg>
-                    Animate with Video Model
-                </button>
-            </div>
-        </div>
-    </div>
+    <!-- FIREBASE & APP LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-    <script>
-        const API_URLS = {
+        const firebaseConfig = {
+            apiKey: "AIzaSyDUYLB5q1WhJWI_xd5cOUojf6ReaaiB7wY",
+            authDomain: "unified-ai-studio.firebaseapp.com",
+            projectId: "unified-ai-studio",
+            storageBucket: "unified-ai-studio.firebasestorage.app",
+            messagingSenderId: "119336766564",
+            appId: "1:119336766564:web:6ee68eeb16147522d96371"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const API = {
             chat: "https://coroner-relock-wrath.ngrok-free.dev",
             image: "https://concrete-gossip-outpost.ngrok-free.dev",
             video: "https://satin-keep-cupping.ngrok-free.dev"
         };
 
-        let currentMode = 'chat';
-        let conversations = JSON.parse(localStorage.getItem('conversations') || '[]');
-        let currentConversationId = null;
-        let attachedMedia = { file: null, url: null, type: null }; // For cross-modal
+        let currentUserId = null;
+        let currentConvId = null;
+        let currentView = 'chat';
+        let conversations = [];
+        let unsubscribeChats = null;
 
-        // Mode Switching
-        function setMode(mode, navElement) {
-            currentMode = mode;
-            document.getElementById('mode-dropdown').value = mode;
+        // --- AUTH & FIRESTORE SETUP ---
+        signInAnonymously(auth).catch((error) => console.error("Auth Error:", error));
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                setupRealtimeChats();
+            }
+        });
+
+        function setupRealtimeChats() {
+            if (!currentUserId) return;
+            const q = query(collection(db, `users/${currentUserId}/chats`), orderBy("updatedAt", "desc"));
             
-            // Update sidebar
-            if (navElement) {
-                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-                navElement.classList.add('active');
-            } else {
-                document.querySelectorAll('.nav-item').forEach(item => {
-                    item.classList.remove('active');
-                    if (item.querySelector('span').textContent.toLowerCase() === mode) {
-                        item.classList.add('active');
-                    }
+            if (unsubscribeChats) unsubscribeChats();
+            
+            unsubscribeChats = onSnapshot(q, (snapshot) => {
+                conversations = [];
+                snapshot.forEach((docSnapshot) => {
+                    conversations.push({ id: docSnapshot.id, ...docSnapshot.data() });
                 });
-            }
-
-            // Show/hide tabs
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-            document.getElementById(`${mode}-tab`).classList.remove('hidden');
-
-            // Update header & placeholder
-            const titles = { 'chat': 'Chat', 'image': 'Image Generation', 'video': 'Video Generation' };
-            const placeholders = { 'chat': 'Message SAINT SILK...', 'image': 'Describe the image...', 'video': 'Describe the video...' };
-            document.getElementById('header-title').textContent = titles[mode];
-            document.getElementById('chat-input').placeholder = placeholders[mode];
-        }
-
-        // Modal Functions
-        function openEditModal(url, type) {
-            attachedMedia.url = url;
-            attachedMedia.type = type;
-            const container = document.getElementById('modal-media-container');
-            if (type === 'image') {
-                container.innerHTML = `<img src="${url}" alt="Generated Image">`;
-            } else {
-                container.innerHTML = `<video controls src="${url}"></video>`;
-            }
-            document.getElementById('edit-modal').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('edit-modal').classList.add('hidden');
-        }
-
-        async function sendToModel(targetMode) {
-            // Fetch the media as a blob to send to the backend
-            try {
-                const response = await fetch(attachedMedia.url);
-                const blob = await response.blob();
-                const ext = attachedMedia.type === 'image' ? 'png' : 'mp4';
-                attachedMedia.file = new File([blob], `source.${ext}`, { type: blob.type });
                 
-                // Update UI preview
-                renderAttachedPreview(targetMode);
+                renderChatList();
                 
-                // Switch mode
-                setMode(targetMode);
-                closeModal();
-            } catch (err) {
-                alert('Failed to load media for editing.');
-            }
+                const currentConv = conversations.find(c => c.id === currentConvId);
+                if (currentConv) {
+                    renderMessages(currentConv);
+                } else if (conversations.length > 0 && !currentConvId) {
+                    currentConvId = conversations[0].id;
+                    renderMessages(conversations[0]);
+                } else if (conversations.length === 0) {
+                    window.newChat();
+                }
+            });
         }
 
-        function renderAttachedPreview(mode) {
-            const container = document.getElementById(`${mode}-attached-preview`);
-            if (!attachedMedia.file) {
-                container.innerHTML = '';
-                return;
-            }
-            const isImage = attachedMedia.type === 'image';
-            container.innerHTML = `
-                <div class="attached-media-chip">
-                    ${isImage ? `<img src="${URL.createObjectURL(attachedMedia.file)}">` : '🎬'}
-                    <span>Using ${attachedMedia.type} as source</span>
-                    <button onclick="clearAttachedMedia('${mode}')">×</button>
-                </div>
-            `;
-        }
+        // --- ACTIONS ---
+        window.newChat = async function() {
+            if (!currentUserId) return;
+            const newId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+            await setDoc(doc(db, `users/${currentUserId}/chats`, newId), { 
+                title: 'New Chat', 
+                messages: [], 
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+            });
+            currentConvId = newId;
+        };
 
-        function clearAttachedMedia(mode) {
-            attachedMedia = { file: null, url: null, type: null };
-            renderAttachedPreview(mode);
-        }
-
-        // Chat Functions
-        function generateId() { return Date.now().toString(36) + Math.random().toString(36).substr(2); }
-        function saveConversations() { localStorage.setItem('conversations', JSON.stringify(conversations)); }
-        function newChat() {
-            const newConv = { id: generateId(), title: 'New Chat', messages: [], createdAt: Date.now() };
-            conversations.unshift(newConv);
-            saveConversations();
-            currentConversationId = newConv.id;
+        window.loadChat = function(id) {
+            currentConvId = id;
             renderChatList();
-            renderMessages();
-        }
-        function clearChat() {
-            if (currentConversationId) {
-                const conv = conversations.find(c => c.id === currentConversationId);
-                if (conv) { conv.messages = []; saveConversations(); renderMessages(); }
-            }
-        }
-        function loadConversation(convId) { currentConversationId = convId; renderChatList(); renderMessages(); }
-        function getCurrentConversation() { return conversations.find(c => c.id === currentConversationId); }
+            const conv = conversations.find(c => c.id === id);
+            if (conv) renderMessages(conv);
+        };
 
+        window.clearChat = async function() {
+            if (!currentConvId || !currentUserId) return;
+            await setDoc(doc(db, `users/${currentUserId}/chats`, currentConvId), {
+                messages: [],
+                updatedAt: serverTimestamp()
+            }, { merge: true });
+        };
+
+        window.deleteChat = async function(id, event) {
+            if(event) event.stopPropagation();
+            if (!confirm('Delete this chat?')) return;
+            await deleteDoc(doc(db, `users/${currentUserId}/chats`, id));
+            if (currentConvId === id) currentConvId = null;
+        };
+
+        window.addMsg = async function(role, content) {
+            if (!currentConvId || !currentUserId) return;
+            const conv = conversations.find(c => c.id === currentConvId);
+            if (!conv) return;
+
+            const newMessages = [...(conv.messages || []), { role, content, timestamp: Date.now() }];
+            let newTitle = conv.title || 'New Chat';
+            if (newTitle === 'New Chat' && role === 'user') {
+                newTitle = content.substring(0, 30) + (content.length > 30 ? '...' : '');
+            }
+
+            await setDoc(doc(db, `users/${currentUserId}/chats`, currentConvId), {
+                messages: newMessages,
+                title: newTitle,
+                updatedAt: serverTimestamp()
+            }, { merge: true });
+        };
+
+        // --- UI RENDERING ---
         function renderChatList() {
             const list = document.getElementById('chat-list');
-            list.innerHTML = conversations.map(conv => {
-                const isActive = conv.id === currentConversationId ? 'active' : '';
-                const preview = conv.messages.length > 0 ? conv.messages[conv.messages.length - 1].content.substring(0, 30) + '...' : 'No messages yet';
-                return `<div class="chat-item ${isActive}" onclick="loadConversation('${conv.id}')">${preview}</div>`;
-            }).join('');
+            if (!list) return;
+            list.innerHTML = conversations.map(c => `
+                <div class="chat-item ${c.id === currentConvId ? 'active' : ''}" onclick="loadChat('${c.id}')">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;">${c.title || 'New Chat'}</span>
+                        <button onclick="deleteChat('${c.id}', event)" style="background:none; border:none; color:var(--text-muted); cursor:pointer; padding:4px; font-size:16px; line-height:1;">×</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function renderMessages() {
+        function renderMessages(conv) {
             const container = document.getElementById('chat-messages');
-            const conv = getCurrentConversation();
-            if (!conv || conv.messages.length === 0) {
-                container.innerHTML = `<div class="welcome-screen" style="text-align: center; padding: 60px 0;"><div style="width: 80px; height: 80px; margin: 0 auto 24px; background: var(--gradient-primary); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron'; font-weight: 900; font-size: 32px; color: white;">AI</div><h1 style="margin-bottom: 12px;">Welcome to SAINT SILK</h1><p style="color: var(--text-secondary);">Next-Generation AI Studio</p></div>`;
+            if (!container) return;
+            
+            if (!conv || !conv.messages || conv.messages.length === 0) {
+                container.innerHTML = `<div style="text-align: center; margin-top: 20vh; color: var(--text-muted);">
+                    <h1 style="font-size: 24px; font-weight: 600; color: var(--text-main); margin-bottom: 8px;">How can I help you today?</h1>
+                    <p style="font-size: 14px;">Powered by Qwen 2.5 with live web crawling.</p>
+                </div>`;
                 return;
             }
-            container.innerHTML = conv.messages.map(msg => `
-                <div class="message ${msg.role}">
-                    <div class="message-avatar">${msg.role === 'user' ? 'U' : 'AI'}</div>
-                    <div class="message-content">${formatMessage(msg.content)}</div>
+
+            container.innerHTML = conv.messages.map(m => `
+                <div class="msg ${m.role}">
+                    <div class="avatar">${m.role === 'user' ? 'U' : 'AI'}</div>
+                    <div class="bubble">${m.content.replace(/\n/g, '<br>').replace(/```([\s\S]*?)```/g, '<pre>$1</pre>')}</div>
                 </div>
             `).join('');
             container.scrollTop = container.scrollHeight;
         }
 
-        function formatMessage(content) { return content.replace(/```([\s\S]*?)```/g, '<pre>$1</pre>').replace(/\n/g, '<br>'); }
+        // --- GLOBAL UI FUNCTIONS ---
+        window.switchView = function(view, el) {
+            currentView = view;
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(`view-${view}`).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if(el) el.classList.add('active');
 
-        function addMessage(role, content) {
-            const conv = getCurrentConversation();
-            if (!conv) return;
-            conv.messages.push({ role, content, timestamp: Date.now() });
-            if (conv.title === 'New Chat' && role === 'user') conv.title = content.substring(0, 30) + '...';
-            saveConversations();
-            renderMessages();
-            renderChatList();
-        }
+            const hints = { chat: 'Chat Mode • Press Enter to send', image: 'Image Mode • Press Enter to generate', video: 'Video Mode • Press Enter to generate' };
+            document.getElementById('input-hint').textContent = hints[view];
+            
+            const placeholders = { chat: 'Message SAINT SILK...', image: 'Describe the image...', video: 'Describe the video...' };
+            document.getElementById('main-input').placeholder = placeholders[view];
+        };
 
-        async function sendMessage() {
-            const input = document.getElementById('chat-input');
-            const message = input.value.trim();
-            if (!message) return;
-            if (!currentConversationId || !getCurrentConversation()) newChat();
-
-            addMessage('user', message);
+        window.handleSend = async function() {
+            const input = document.getElementById('main-input');
+            const text = input.value.trim();
+            if (!text) return;
             input.value = '';
-            const sendBtn = document.getElementById('send-btn');
-            sendBtn.disabled = true;
 
-            const container = document.getElementById('chat-messages');
-            const loadingDiv = document.createElement('div');
-            loadingDiv.className = 'message assistant';
-            loadingDiv.innerHTML = `<div class="message-avatar">AI</div><div class="message-content"><div class="loading-container"><div class="spinner"></div><span>Processing...</span></div></div>`;
-            container.appendChild(loadingDiv);
-
-            try {
-                const conv = getCurrentConversation();
-                const messages = conv.messages.map(m => ({ role: m.role, content: m.content }));
-                const formData = new FormData();
-                formData.append('messages', JSON.stringify(messages));
-                formData.append('max_tokens', '1024');
-
-                const response = await fetch(`${API_URLS.chat}/generate_chat`, { method: 'POST', body: formData });
-                const data = await response.json();
-                loadingDiv.remove();
-                if (data.error) throw new Error(data.error);
-                addMessage('assistant', data.result_text);
-            } catch (error) {
-                loadingDiv.remove();
-                addMessage('assistant', `Error: ${error.message}`);
-            } finally {
-                sendBtn.disabled = false;
-            }
-        }
-
-        function handleInput(event) {
-            const input = event.target;
-            input.style.height = 'auto';
-            input.style.height = Math.min(input.scrollHeight, 200) + 'px';
-            if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); }
-        }
-
-        // Image Generation
-        async function generateImage() {
-            const prompt = document.getElementById('image-prompt').value.trim();
-            if (!prompt) { alert('Please enter a prompt'); return; }
-
-            const btn = document.getElementById('image-btn');
-            const resultArea = document.getElementById('image-result');
-            btn.disabled = true;
-            resultArea.innerHTML = `<div class="loading-container"><div class="spinner"></div><span>Generating...</span></div>`;
-
-            try {
-                const formData = new FormData();
-                formData.append('prompt', prompt);
-                formData.append('negative_prompt', '');
-                formData.append('style_preset', 'None');
-                formData.append('enhance_prompt', 'true');
-                formData.append('aspect_ratio', document.getElementById('image-aspect').value);
-                formData.append('resolution', document.getElementById('image-resolution').value);
-                formData.append('steps', '8');
-                formData.append('num_images', '1');
-                formData.append('seed', '-1');
-                formData.append('lora_name', 'None');
+            if (currentView === 'chat') {
+                if (!currentConvId) await window.newChat();
                 
-                // Attach source image if editing
-                if (attachedMedia.file && attachedMedia.type === 'image') {
-                    formData.append('start_image', attachedMedia.file);
-                }
+                await window.addMsg('user', text);
+                
+                const btn = document.getElementById('send-btn');
+                btn.disabled = true;
+                
+                const conv = conversations.find(c => c.id === currentConvId);
+                const messagesForApi = conv ? conv.messages.map(m => ({role: m.role, content: m.content})) : [{role: 'user', content: text}];
 
-                const response = await fetch(`${API_URLS.image}/generate`, { method: 'POST', body: formData });
-                const data = await response.json();
-                if (data.error) throw new Error(data.error);
+                const container = document.getElementById('chat-messages');
+                const loading = document.createElement('div');
+                loading.className = 'msg assistant';
+                loading.innerHTML = `<div class="avatar">AI</div><div class="bubble"><div class="spinner"></div></div>`;
+                container.appendChild(loading);
+                container.scrollTop = container.scrollHeight;
 
-                if (data.result_url) {
-                    const fullUrl = `${API_URLS.image}${data.result_url}`;
-                    resultArea.innerHTML = `
-                        <img src="${fullUrl}" alt="Generated Image">
-                        <button class="edit-btn" onclick="openEditModal('${fullUrl}', 'image')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                            Edit / Remix
-                        </button>
-                    `;
+                try {
+                    const formData = new FormData();
+                    formData.append('messages', JSON.stringify(messagesForApi));
+                    formData.append('search_web', 'true');
+                    
+                    const res = await fetch(`${API.chat}/generate_chat`, { method: 'POST', body: formData });
+                    const data = await res.json();
+                    loading.remove();
+                    await window.addMsg('assistant', data.result_text || 'No response.');
+                } catch (e) {
+                    loading.remove();
+                    await window.addMsg('assistant', `Error: ${e.message}`);
+                } finally { 
+                    btn.disabled = false; 
                 }
-            } catch (error) {
-                resultArea.innerHTML = `<div style="color: var(--accent-pink);">Error: ${error.message}</div>`;
-            } finally {
-                btn.disabled = false;
+            } 
+            else if (currentView === 'image') {
+                generateImage(text);
+            } 
+            else if (currentView === 'video') {
+                generateVideo(text);
             }
-        }
+        };
 
-        // Video Generation
-        async function generateVideo() {
-            const prompt = document.getElementById('video-prompt').value.trim();
-            if (!prompt) { alert('Please enter a prompt'); return; }
+        window.handleInput = function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) { 
+                e.preventDefault(); 
+                window.handleSend(); 
+            }
+        };
 
-            const btn = document.getElementById('video-btn');
-            const resultArea = document.getElementById('video-result');
+        window.generateImage = async function(overridePrompt) {
+            const prompt = overridePrompt || document.getElementById('img-prompt').value.trim();
+            if (!prompt) return;
+            
+            const btn = document.getElementById('img-btn');
+            const resBox = document.getElementById('img-result');
             btn.disabled = true;
-            resultArea.innerHTML = `<div class="loading-container"><div class="spinner"></div><span>Generating...</span></div>`;
+            resBox.innerHTML = '<div class="spinner"></div>';
+
+            const formData = new FormData();
+            formData.append('prompt', prompt);
+            formData.append('resolution', document.getElementById('img-res').value);
+            formData.append('aspect_ratio', document.getElementById('img-ar').value);
+            formData.append('steps', '8');
 
             try {
-                const formData = new FormData();
-                formData.append('prompt', prompt);
-                formData.append('duration', document.getElementById('video-duration').value);
-                formData.append('resolution', document.getElementById('video-resolution').value);
-                formData.append('aspect_ratio', '16:9 Landscape');
-                formData.append('guide_scale', '3.0');
-                formData.append('steps', '8');
-                formData.append('seed', '-1');
-                formData.append('lora_name', 'None');
-
-                // Attach source image if animating
-                if (attachedMedia.file && attachedMedia.type === 'image') {
-                    formData.append('image_start', attachedMedia.file);
-                }
-
-                const response = await fetch(`${API_URLS.video}/generate`, { method: 'POST', body: formData });
-                const data = await response.json();
-                if (data.error) throw new Error(data.error);
-
+                const res = await fetch(`${API.image}/generate`, { method: 'POST', body: formData });
+                const data = await res.json();
                 if (data.result_url) {
-                    const fullUrl = `${API_URLS.video}${data.result_url}`;
-                    resultArea.innerHTML = `
-                        <video controls autoplay loop src="${fullUrl}"></video>
-                        <button class="edit-btn" onclick="openEditModal('${fullUrl}', 'video')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                            Edit / Remix
-                        </button>
-                    `;
+                    resBox.innerHTML = `<img src="${API.image}${data.result_url}" style="max-width:100%; border-radius:8px;">`;
+                } else {
+                    resBox.innerHTML = 'Failed to generate.';
                 }
-            } catch (error) {
-                resultArea.innerHTML = `<div style="color: var(--accent-pink);">Error: ${error.message}</div>`;
-            } finally {
-                btn.disabled = false;
-            }
-        }
+            } catch (e) { resBox.innerHTML = `Error: ${e.message}`; }
+            finally { btn.disabled = false; }
+        };
 
-        // Init
-        window.onload = () => {
-            if (conversations.length === 0) newChat();
-            else currentConversationId = conversations[0].id;
-            renderChatList();
-            renderMessages();
+        window.generateVideo = async function(overridePrompt) {
+            const prompt = overridePrompt || document.getElementById('vid-prompt').value.trim();
+            if (!prompt) return;
+            
+            const btn = document.getElementById('vid-btn');
+            const resBox = document.getElementById('vid-result');
+            btn.disabled = true;
+            resBox.innerHTML = '<div class="spinner"></div>';
+
+            const formData = new FormData();
+            formData.append('prompt', prompt);
+            formData.append('duration', document.getElementById('vid-dur').value);
+            formData.append('resolution', document.getElementById('vid-res').value);
+            formData.append('steps', '8');
+
+            try {
+                const res = await fetch(`${API.video}/generate`, { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.result_url) {
+                    resBox.innerHTML = `<video controls src="${API.video}${data.result_url}" style="max-width:100%; border-radius:8px;"></video>`;
+                } else {
+                    resBox.innerHTML = 'Failed to generate.';
+                }
+            } catch (e) { resBox.innerHTML = `Error: ${e.message}`; }
+            finally { btn.disabled = false; }
         };
     </script>
 </body>
