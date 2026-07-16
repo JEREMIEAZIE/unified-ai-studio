@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SAINT SILK — AI Studio</title>
     
-    <!-- 🌟 FAVICON FIX -->
+    <!-- Favicon Fix -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧵</text></svg>">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -39,12 +39,11 @@
         html, body { height: 100%; overflow: hidden; }
         body { font-family: var(--font-sans); background: var(--bg-app); color: var(--text-main); display: flex; font-size: 14px; }
 
-        /* ===== SIDEBAR (Desktop Default) ===== */
+        /* SIDEBAR */
         .sidebar {
             width: 240px; background: var(--bg-sidebar); border-right: 1px solid var(--border);
             display: flex; flex-direction: column; padding: 16px 12px; flex-shrink: 0; z-index: 100;
         }
-        
         .brand { display: flex; align-items: center; gap: 10px; padding: 8px 10px 16px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
         .brand img { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; }
         .brand-name { font-weight: 800; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; }
@@ -76,7 +75,7 @@
         .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
         .btn-ghost:active { background: var(--bg-hover); color: var(--text-main); }
 
-        /* ===== MOBILE HEADER ===== */
+        /* MOBILE HEADER */
         .mobile-header {
             display: none; position: fixed; top: 0; left: 0; right: 0; height: var(--header-height);
             background: var(--bg-sidebar); border-bottom: 1px solid var(--border); z-index: 90;
@@ -85,7 +84,7 @@
         .menu-toggle { background: none; border: none; color: var(--text-main); font-size: 24px; cursor: pointer; padding: 8px; touch-action: manipulation; }
         .mobile-logo { font-weight: 800; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; }
 
-        /* ===== MAIN AREA ===== */
+        /* MAIN AREA */
         .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; padding-top: 0; }
         .topbar {
             padding: 14px 24px; background: var(--bg-sidebar); border-bottom: 1px solid var(--border);
@@ -97,7 +96,7 @@
         .view { display: none; height: 100%; min-height: 100%; }
         .view.active { display: flex; flex-direction: column; }
 
-        /* ===== CREATE VIEW ===== */
+        /* CREATE VIEW */
         .create-layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; padding: 20px; max-width: 1400px; margin: 0 auto; width: 100%; height: 100%; overflow: hidden; }
         .create-main { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
 
@@ -134,7 +133,7 @@
         .generate-btn:active { background: var(--accent-hover); }
         .generate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* ===== GALLERY VIEW ===== */
+        /* GALLERY VIEW */
         .gallery-header { padding: 20px 24px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
         .gallery-header h2 { font-size: 18px; font-weight: 700; }
         .gallery-filters { display: flex; gap: 8px; }
@@ -151,7 +150,7 @@
         .gallery-item .meta strong { display: block; font-size: 12px; margin-bottom: 4px; }
         .gallery-empty { grid-column: 1/-1; text-align: center; padding: 80px 20px; color: var(--text-dim); }
 
-        /* ===== CHAT VIEW ===== */
+        /* CHAT VIEW */
         .chat-layout { max-width: 800px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; height: 100%; }
         .chat-messages { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
         .msg { display: flex; gap: 12px; animation: fadeIn 0.3s ease; }
@@ -168,7 +167,7 @@
         .suggestion { padding: 12px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; color: var(--text-muted); cursor: pointer; transition: all 0.15s; text-align: left; touch-action: manipulation; }
         .suggestion:active { border-color: var(--accent); color: var(--text-main); }
 
-        /* ===== INPUT BAR ===== */
+        /* INPUT BAR */
         .input-bar {
             position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 24px;
             background: var(--bg-sidebar); border-top: 1px solid var(--border);
@@ -193,7 +192,7 @@
         .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
         .input-hint { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 8px; }
 
-        /* ===== TOAST & OVERLAY ===== */
+        /* TOAST & OVERLAY */
         .toast {
             position: fixed; top: 80px; right: 20px; padding: 12px 16px;
             background: var(--bg-panel); border: 1px solid var(--border);
@@ -210,7 +209,7 @@
             z-index: 95; backdrop-filter: blur(2px);
         }
 
-        /* ===== RESPONSIVE (Mobile) ===== */
+        /* RESPONSIVE */
         @media (max-width: 1024px) {
             .create-layout { grid-template-columns: 1fr; overflow-y: auto; padding: 16px; }
             .settings-panel { order: -1; max-height: none; }
@@ -220,16 +219,12 @@
 
         @media (max-width: 768px) {
             .mobile-header { display: flex; }
-            
-            /* Hide sidebar by default on mobile */
             .sidebar {
                 position: fixed; height: 100%; left: 0; top: 0;
                 transform: translateX(-100%);
                 transition: transform 0.3s ease;
             }
-            /* Show sidebar when 'open' class is added */
             .sidebar.open { transform: translateX(0); }
-            
             .sidebar-overlay.active { display: block; }
             .main { padding-top: var(--header-height); }
             .topbar { display: none; }
@@ -281,7 +276,6 @@
     </div>
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <!-- Sidebar: NO 'mobile-hidden' class by default -->
     <aside class="sidebar" id="sidebar">
         <div class="brand">
             <img src="logo.png" alt="Logo">
@@ -403,7 +397,7 @@
                     <div class="chat-messages" id="chat-messages">
                         <div class="chat-welcome">
                             <h1>How can I help?</h1>
-                            <p>Powered by Qwen 35B with live web access</p>
+                            <p>Powered by Qwen 2.5 with live web access</p>
                             <div class="suggestion-grid">
                                 <div class="suggestion" onclick="useSuggestion(this)">Explain quantum computing simply</div>
                                 <div class="suggestion" onclick="useSuggestion(this)">Write a cyberpunk story opening</div>
@@ -428,20 +422,26 @@
     </main>
 
     <script type="module">
+        // Using stable 10.8.1 to prevent version conflicts
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, deleteDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
+        // 🌟 YOUR NEW FIREBASE CONFIG
         const firebaseConfig = {
-            apiKey: "AIzaSyDUYLB5q1WhJWI_xd5cOUojf6ReaaiB7wY", authDomain: "unified-ai-studio.firebaseapp.com", projectId: "unified-ai-studio",
-            storageBucket: "unified-ai-studio.firebasestorage.app", messagingSenderId: "119336766564", appId: "1:119336766564:web:6ee68eeb16147522d96371"
+            apiKey: "AIzaSyBY9mSpUeat1zu70i4JpcB-7fYxZj5YfCk",
+            authDomain: "slk-1-58b0d.firebaseapp.com",
+            projectId: "slk-1-58b0d",
+            storageBucket: "slk-1-58b0d.firebasestorage.app",
+            messagingSenderId: "1018460322951",
+            appId: "1:1018460322951:web:b05f8be9adfb323b36cc22"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // 🌟 UPDATE THESE URLs IF YOUR KAGGLE NOTEBOOKS RESTART AND GIVE NEW LINKS
+        // 🌟 UPDATE THESE URLs WITH YOUR KAGGLE NOTEBOOK URLS ONCE THEY ARE RUNNING
         const API = { 
             chat: "https://coroner-relock-wrath.ngrok-free.dev", 
             image: "https://concrete-gossip-outpost.ngrok-free.dev", 
@@ -452,7 +452,7 @@
         let conversations = [], gallery = JSON.parse(localStorage.getItem('ss_gallery') || '[]');
         let unsubscribeChats = null, isGenerating = false;
 
-        signInAnonymously(auth).catch(e => console.error(e));
+        signInAnonymously(auth).catch(e => console.error("Auth error:", e));
         onAuthStateChanged(auth, (user) => { if (user) { currentUserId = user.uid; setupChats(); } });
 
         function setupChats() {
@@ -465,16 +465,13 @@
                 conversations.sort((a, b) => { const tA = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : (a.updatedAt || 0); const tB = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : (b.updatedAt || 0); return tB - tA; });
                 renderChatList();
                 if (currentConvId) { const active = conversations.find(c => c.id === currentConvId); if (active) renderMessages(active); }
-            });
+            }, (err) => console.error("Firestore error:", err));
         }
 
-        // FIXED SIDEBAR TOGGLE
         window.toggleSidebar = function() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
             if (window.innerWidth <= 768) {
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('active');
+                document.getElementById('sidebar').classList.toggle('open');
+                document.querySelector('.sidebar-overlay').classList.toggle('active');
             }
         };
 
@@ -484,11 +481,9 @@
             document.getElementById(`view-${view}`).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             if (el) el.classList.add('active'); else { const navEl = document.querySelector(`.nav-item[data-view="${view}"]`); if (navEl) navEl.classList.add('active'); }
-            const titles = { create: 'Create', gallery: 'Gallery', chat: 'Chat' };
-            document.getElementById('topbar-title').textContent = titles[view];
+            document.getElementById('topbar-title').textContent = view.charAt(0).toUpperCase() + view.slice(1);
             updateInputPlaceholder();
             if (view === 'gallery') renderGallery();
-            
             if (window.innerWidth <= 768) {
                 document.getElementById('sidebar').classList.remove('open');
                 document.querySelector('.sidebar-overlay').classList.remove('active');
@@ -508,13 +503,16 @@
             const input = document.getElementById('main-input');
             const hint = document.getElementById('input-hint');
             if (currentView === 'chat') { input.placeholder = 'Message the AI...'; hint.textContent = 'Press Enter to send • Shift+Enter for new line'; }
-            else if (currentView === 'create') { input.placeholder = createMode === 'image' ? 'Describe the image you want to create...' : 'Describe the video scene...'; hint.textContent = `Press Enter to generate ${createMode}`; }
+            else { input.placeholder = createMode === 'image' ? 'Describe the image you want to create...' : 'Describe the video scene...'; hint.textContent = `Press Enter to generate ${createMode}`; }
         }
 
         const STYLE_KEYWORDS = {
-            cinematic: ', cinematic lighting, dramatic shadows, film grain, 8k, masterpiece', photorealistic: ', photorealistic, highly detailed, natural lighting, 8k, sharp focus',
-            anime: ', anime style, vibrant colors, clean line art, masterpiece, detailed', cyberpunk: ', cyberpunk, neon lights, futuristic, rain, reflections, 8k',
-            fantasy: ', fantasy art, magical atmosphere, ethereal lighting, detailed, 8k', '3d': ', 3D render, octane render, Unreal Engine, highly detailed, 8k'
+            cinematic: ', cinematic lighting, dramatic shadows, film grain, 8k, masterpiece', 
+            photorealistic: ', photorealistic, highly detailed, natural lighting, 8k, sharp focus',
+            anime: ', anime style, vibrant colors, clean line art, masterpiece, detailed', 
+            cyberpunk: ', cyberpunk, neon lights, futuristic, rain, reflections, 8k',
+            fantasy: ', fantasy art, magical atmosphere, ethereal lighting, detailed, 8k', 
+            '3d': ', 3D render, octane render, Unreal Engine, highly detailed, 8k'
         };
 
         window.applyStyle = function(el, style) {
@@ -528,20 +526,19 @@
         };
 
         window.triggerGenerate = function() {
-            const input = document.getElementById('main-input');
-            const text = input.value.trim();
-            if (!text) { showToast('Please enter a prompt in the input bar', 'error'); return; }
+            const text = document.getElementById('main-input').value.trim();
+            if (!text) { showToast('Please enter a prompt', 'error'); return; }
             handleGenerate(text);
         };
 
         window.handleGenerate = async function(prompt) {
             if (isGenerating) return;
-            if (!prompt) return;
             isGenerating = true;
             const btn = document.getElementById('generate-btn');
             const stage = document.getElementById('result-stage');
             btn.disabled = true;
             stage.innerHTML = `<div class="loading-overlay"><div class="spinner"></div><div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div><div class="loading-text">${createMode === 'image' ? 'Generating image' : 'Rendering video'}...</div></div>`;
+            
             let progress = 0;
             const progressInterval = setInterval(() => { progress += Math.random() * 8; if (progress > 92) progress = 92; const fill = document.getElementById('progress-fill'); if (fill) fill.style.width = progress + '%'; }, 1500);
 
@@ -549,35 +546,48 @@
                 const formData = new FormData();
                 formData.append('prompt', prompt);
                 if (createMode === 'image') {
-                    formData.append('resolution', document.getElementById('img-res').value); formData.append('aspect_ratio', document.getElementById('img-ar').value);
-                    formData.append('steps', document.getElementById('img-steps').value); formData.append('num_images', document.getElementById('img-num').value);
-                    formData.append('seed', document.getElementById('img-seed').value); formData.append('negative_prompt', document.getElementById('img-neg').value);
-                    formData.append('enhance_prompt', document.getElementById('img-enhance').checked ? 'true' : 'false'); formData.append('style_preset', 'None'); formData.append('lora_name', 'None');
-                    
-                    const res = await fetch(`${API.image}/generate`, { method: 'POST', body: formData });
-                    if (!res.ok) throw new Error(`Server returned ${res.status}. Is your Kaggle notebook running?`);
-                    const data = await res.json(); 
-                    clearInterval(progressInterval);
-                    if (data.error) throw new Error(data.error);
-                    
+                    formData.append('resolution', document.getElementById('img-res').value); 
+                    formData.append('aspect_ratio', document.getElementById('img-ar').value);
+                    formData.append('steps', document.getElementById('img-steps').value); 
+                    formData.append('num_images', document.getElementById('img-num').value);
+                    formData.append('seed', document.getElementById('img-seed').value); 
+                    formData.append('negative_prompt', document.getElementById('img-neg').value);
+                    formData.append('enhance_prompt', document.getElementById('img-enhance').checked ? 'true' : 'false'); 
+                    formData.append('style_preset', 'None'); formData.append('lora_name', 'None');
+                } else {
+                    formData.append('duration', document.getElementById('vid-dur').value); 
+                    formData.append('resolution', document.getElementById('vid-res').value);
+                    formData.append('aspect_ratio', document.getElementById('vid-ar').value); 
+                    formData.append('steps', document.getElementById('vid-steps').value);
+                    formData.append('guide_scale', document.getElementById('vid-guide').value); 
+                    formData.append('seed', document.getElementById('vid-seed').value); 
+                    formData.append('lora_name', 'None');
+                }
+                
+                const endpoint = createMode === 'image' ? API.image : API.video;
+                const res = await fetch(`${endpoint}/generate`, { method: 'POST', body: formData });
+                
+                if (!res.ok) throw new Error(`Server returned ${res.status}. Is your Kaggle notebook running?`);
+                const data = await res.json(); 
+                clearInterval(progressInterval);
+                if (data.error) throw new Error(data.error);
+                
+                if (createMode === 'image') {
                     if (data.result_urls && data.result_urls.length > 0) {
-                        stage.innerHTML = `<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; padding:16px; width:100%;">${data.result_urls.map(url => { const fullUrl = `${API.image}${url}`; addToGallery(fullUrl, 'image', prompt); return `<img src="${fullUrl}" style="width:100%; border-radius:8px; cursor:pointer;" onclick="window.open(this.src)">`; }).join('')}</div>`;
-                    } else if (data.result_url) { const fullUrl = `${API.image}${data.result_url}`; addToGallery(fullUrl, 'image', prompt); stage.innerHTML = `<img src="${fullUrl}" style="max-width:100%; max-height:100%; border-radius:8px;" onclick="window.open(this.src)">`; }
-                    else throw new Error('No result returned');
+                        stage.innerHTML = `<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; padding:16px; width:100%;">${data.result_urls.map(url => { const fullUrl = `${endpoint}${url}`; addToGallery(fullUrl, 'image', prompt); return `<img src="${fullUrl}" style="width:100%; border-radius:8px; cursor:pointer;" onclick="window.open(this.src)">`; }).join('')}</div>`;
+                    } else if (data.result_url) { 
+                        const fullUrl = `${endpoint}${data.result_url}`; 
+                        addToGallery(fullUrl, 'image', prompt); 
+                        stage.innerHTML = `<img src="${fullUrl}" style="max-width:100%; max-height:100%; border-radius:8px;" onclick="window.open(this.src)">`; 
+                    } else throw new Error('No result returned');
                     showToast('Image generated successfully', 'success');
                 } else {
-                    formData.append('duration', document.getElementById('vid-dur').value); formData.append('resolution', document.getElementById('vid-res').value);
-                    formData.append('aspect_ratio', document.getElementById('vid-ar').value); formData.append('steps', document.getElementById('vid-steps').value);
-                    formData.append('guide_scale', document.getElementById('vid-guide').value); formData.append('seed', document.getElementById('vid-seed').value); formData.append('lora_name', 'None');
-                    
-                    const res = await fetch(`${API.video}/generate`, { method: 'POST', body: formData });
-                    if (!res.ok) throw new Error(`Server returned ${res.status}. Is your Kaggle notebook running?`);
-                    const data = await res.json(); 
-                    clearInterval(progressInterval);
-                    if (data.error) throw new Error(data.error);
-                    
-                    if (data.result_url) { const fullUrl = `${API.video}${data.result_url}`; addToGallery(fullUrl, 'video', prompt); stage.innerHTML = `<video controls autoplay loop src="${fullUrl}" style="max-width:100%; max-height:100%; border-radius:8px;"></video>`; showToast('Video generated successfully', 'success'); }
-                    else throw new Error('No result returned');
+                    if (data.result_url) { 
+                        const fullUrl = `${endpoint}${data.result_url}`; 
+                        addToGallery(fullUrl, 'video', prompt); 
+                        stage.innerHTML = `<video controls autoplay loop src="${fullUrl}" style="max-width:100%; max-height:100%; border-radius:8px;"></video>`; 
+                        showToast('Video generated successfully', 'success'); 
+                    } else throw new Error('No result returned');
                 }
             } catch (e) { 
                 clearInterval(progressInterval); 
@@ -613,11 +623,20 @@
             const newConv = { id: newId, title: 'New Chat', messages: [], updatedAt: Date.now() };
             conversations.unshift(newConv); renderChatList(); renderMessages(newConv);
             if (currentUserId) { try { await setDoc(doc(db, `users/${currentUserId}/chats`, newId), { title: 'New Chat', messages: [], createdAt: serverTimestamp(), updatedAt: serverTimestamp() }); } catch (e) { console.error(e); } }
-            if (currentView !== 'chat') { const chatNav = document.querySelector('.nav-item[data-view="chat"]'); switchView('chat', chatNav); }
+            if (currentView !== 'chat') switchView('chat', document.querySelector('.nav-item[data-view="chat"]'));
         };
 
-        window.loadChat = function(id) { currentConvId = id; renderChatList(); const conv = conversations.find(c => c.id === id); if (conv) renderMessages(conv); if (currentView !== 'chat') { const chatNav = document.querySelector('.nav-item[data-view="chat"]'); switchView('chat', chatNav); } };
-        window.deleteChat = async function(id, event) { if (event) event.stopPropagation(); if (!confirm('Delete this chat?')) return; conversations = conversations.filter(c => c.id !== id); if (currentConvId === id) currentConvId = conversations.length > 0 ? conversations[0].id : null; renderChatList(); if (currentConvId) { const conv = conversations.find(c => c.id === currentConvId); if (conv) renderMessages(conv); } if (currentUserId) { try { await deleteDoc(doc(db, `users/${currentUserId}/chats`, id)); } catch (e) {} } };
+        window.loadChat = function(id) { currentConvId = id; renderChatList(); const conv = conversations.find(c => c.id === id); if (conv) renderMessages(conv); if (currentView !== 'chat') switchView('chat', document.querySelector('.nav-item[data-view="chat"]')); };
+        
+        window.deleteChat = async function(id, event) { 
+            if (event) event.stopPropagation(); 
+            if (!confirm('Delete this chat?')) return; 
+            conversations = conversations.filter(c => c.id !== id); 
+            if (currentConvId === id) currentConvId = conversations.length > 0 ? conversations[0].id : null; 
+            renderChatList(); 
+            if (currentConvId) { const conv = conversations.find(c => c.id === currentConvId); if (conv) renderMessages(conv); } 
+            if (currentUserId) { try { await deleteDoc(doc(db, `users/${currentUserId}/chats`, id)); } catch (e) {} } 
+        };
 
         async function addMsg(role, content) {
             if (!currentConvId) return;
@@ -629,10 +648,25 @@
             if (currentUserId) { try { await setDoc(doc(db, `users/${currentUserId}/chats`, currentConvId), { messages: conv.messages, title: conv.title, updatedAt: serverTimestamp() }, { merge: true }); } catch (e) { console.error(e); } }
         }
 
-        function renderChatList() { const list = document.getElementById('chat-list'); if (!list) return; if (conversations.length === 0) { list.innerHTML = `<div style="padding:12px; color:var(--text-dim); font-size:11px;">No chats yet</div>`; return; } list.innerHTML = conversations.map(c => `<div class="chat-item ${c.id === currentConvId ? 'active' : ''}" onclick="loadChat('${c.id}')"><span>${c.title || 'New Chat'}</span><button onclick="deleteChat('${c.id}', event)" title="Delete">×</button></div>`).join(''); }
-        function renderMessages(conv) { const container = document.getElementById('chat-messages'); if (!container) return; if (!conv || !conv.messages || conv.messages.length === 0) { container.innerHTML = `<div class="chat-welcome"><h1>How can I help?</h1><p>Powered by Qwen 35B with live web access</p><div class="suggestion-grid"><div class="suggestion" onclick="useSuggestion(this)">Explain quantum computing simply</div><div class="suggestion" onclick="useSuggestion(this)">Write a cyberpunk story opening</div><div class="suggestion" onclick="useSuggestion(this)">What's trending in AI today?</div><div class="suggestion" onclick="useSuggestion(this)">Help me debug Python code</div></div></div>`; return; } container.innerHTML = conv.messages.map(m => `<div class="msg ${m.role}"><div class="avatar">${m.role === 'user' ? 'U' : 'AI'}</div><div class="bubble">${m.content.replace(/\n/g, '<br>').replace(/```([\s\S]*?)```/g, '<pre>$1</pre>')}</div></div>`).join(''); container.scrollTop = container.scrollHeight; }
+        function renderChatList() { 
+            const list = document.getElementById('chat-list'); 
+            if (!list) return; 
+            if (conversations.length === 0) { list.innerHTML = `<div style="padding:12px; color:var(--text-dim); font-size:11px;">No chats yet</div>`; return; } 
+            list.innerHTML = conversations.map(c => `<div class="chat-item ${c.id === currentConvId ? 'active' : ''}" onclick="loadChat('${c.id}')"><span>${c.title || 'New Chat'}</span><button onclick="deleteChat('${c.id}', event)" title="Delete">×</button></div>`).join(''); 
+        }
+        
+        function renderMessages(conv) { 
+            const container = document.getElementById('chat-messages'); 
+            if (!container) return; 
+            if (!conv || !conv.messages || conv.messages.length === 0) { 
+                container.innerHTML = `<div class="chat-welcome"><h1>How can I help?</h1><p>Powered by Qwen 2.5 with live web access</p><div class="suggestion-grid"><div class="suggestion" onclick="useSuggestion(this)">Explain quantum computing simply</div><div class="suggestion" onclick="useSuggestion(this)">Write a cyberpunk story opening</div><div class="suggestion" onclick="useSuggestion(this)">What's trending in AI today?</div><div class="suggestion" onclick="useSuggestion(this)">Help me debug Python code</div></div></div>`; 
+                return; 
+            } 
+            container.innerHTML = conv.messages.map(m => `<div class="msg ${m.role}"><div class="avatar">${m.role === 'user' ? 'U' : 'AI'}</div><div class="bubble">${m.content.replace(/\n/g, '<br>').replace(/```([\s\S]*?)```/g, '<pre>$1</pre>')}</div></div>`).join(''); 
+            container.scrollTop = container.scrollHeight; 
+        }
 
-        window.useSuggestion = function(el) { const text = el.textContent; document.getElementById('main-input').value = text; handleSend(); };
+        window.useSuggestion = function(el) { document.getElementById('main-input').value = el.textContent; handleSend(); };
 
         window.handleSend = async function() {
             const input = document.getElementById('main-input');
