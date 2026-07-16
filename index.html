@@ -2,277 +2,418 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAINT SILK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SAINT SILK — AI Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-app: #09090b;
-            --bg-sidebar: #121214;
-            --bg-panel: #18181b;
-            --bg-input: #27272a;
-            --border: #27272a;
+            --bg-sidebar: #0f0f12;
+            --bg-panel: #16161a;
+            --bg-input: #1e1e24;
+            --bg-hover: #25252d;
+            --border: #2a2a33;
+            --border-light: #3a3a45;
             --text-main: #fafafa;
-            --text-muted: #a1a1aa;
-            --accent: #8b5cf6;
-            --accent-hover: #7c3aed;
-            --radius: 8px;
-            --font-sans: 'Inter', sans-serif;
+            --text-muted: #8a8a95;
+            --text-dim: #5a5a65;
+            --accent: #a855f7;
+            --accent-hover: #9333ea;
+            --accent-soft: rgba(168, 85, 247, 0.15);
+            --success: #10b981;
+            --danger: #ef4444;
+            --radius: 10px;
+            --radius-sm: 6px;
+            --font-sans: 'Inter', -apple-system, sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
+            --shadow: 0 4px 20px rgba(0,0,0,0.4);
+            --header-height: 60px;
+            --input-height: 70px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--font-sans); background: var(--bg-app); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; }
-        
-        .sidebar { width: 260px; background: var(--bg-sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 16px; flex-shrink: 0; }
-        .main { flex: 1; display: flex; flex-direction: column; position: relative; }
-        .content { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; }
-        .input-area { padding: 16px 24px 24px; background: var(--bg-app); border-top: 1px solid var(--border); }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { height: 100%; overflow: hidden; }
+        body { font-family: var(--font-sans); background: var(--bg-app); color: var(--text-main); display: flex; font-size: 14px; }
 
-        .brand { display: flex; align-items: center; gap: 12px; padding: 8px 12px; margin-bottom: 24px; }
-        .brand img { width: 40px; height: 40px; border-radius: 8px; object-fit: contain; }
-        .brand-name { font-weight: 700; font-size: 14px; letter-spacing: 0.08em; color: var(--text-main); text-transform: uppercase; }
+        /* SIDEBAR */
+        .sidebar {
+            width: 240px; background: var(--bg-sidebar); border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; padding: 16px 12px; flex-shrink: 0; z-index: 100;
+            transition: transform 0.3s ease;
+        }
+        .sidebar.mobile-hidden { transform: translateX(-100%); position: fixed; height: 100%; top: 0; left: 0; }
         
-        .nav-group { margin-bottom: 24px; }
-        .nav-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 0 12px; margin-bottom: 8px; }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-radius: var(--radius); cursor: pointer; color: var(--text-muted); font-size: 14px; font-weight: 500; transition: all 0.2s; margin-bottom: 2px; position: relative; }
-        .nav-item:hover { background: var(--bg-panel); color: var(--text-main); }
-        .nav-item.active { background: var(--bg-panel); color: var(--text-main); }
-        .nav-item.active::before { content: ''; position: absolute; left: 0; width: 3px; height: 18px; background: var(--accent); border-radius: 0 4px 4px 0; }
-        .nav-item svg { width: 16px; height: 16px; stroke-width: 2; }
+        .brand { display: flex; align-items: center; gap: 10px; padding: 8px 10px 16px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+        .brand img { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; }
+        .brand-name { font-weight: 800; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; }
 
-        .chat-list { flex: 1; overflow-y: auto; }
-        .chat-item { padding: 9px 12px; border-radius: var(--radius); cursor: pointer; font-size: 13px; color: var(--text-muted); transition: background 0.2s; margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center; }
-        .chat-item:hover { background: var(--bg-panel); color: var(--text-main); }
+        .nav-section { margin-bottom: 20px; }
+        .nav-label { font-size: 10px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; padding: 0 10px 8px; }
+        .nav-item {
+            display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: var(--radius-sm);
+            cursor: pointer; color: var(--text-muted); font-size: 13px; font-weight: 500; transition: all 0.15s ease; margin-bottom: 2px; position: relative;
+        }
+        .nav-item:active { background: var(--bg-hover); }
+        .nav-item.active { background: var(--accent-soft); color: var(--accent); }
+        .nav-item.active::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 16px; background: var(--accent); border-radius: 0 3px 3px 0; }
+        .nav-item svg { width: 18px; height: 18px; stroke-width: 2; flex-shrink: 0; }
+        .nav-item .badge { margin-left: auto; font-size: 10px; padding: 2px 6px; background: var(--bg-hover); border-radius: 10px; color: var(--text-muted); }
+
+        .chat-list { flex: 1; overflow-y: auto; padding: 0 4px; }
+        .chat-item { padding: 8px 10px; border-radius: var(--radius-sm); cursor: pointer; font-size: 12px; color: var(--text-muted); margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center; transition: background 0.15s; }
+        .chat-item:active { background: var(--bg-hover); }
         .chat-item.active { background: var(--bg-panel); color: var(--text-main); }
         .chat-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
-        .chat-item button { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; font-size: 16px; line-height: 1; opacity: 0; transition: opacity 0.2s; }
-        .chat-item:hover button { opacity: 1; }
-        .chat-item button:hover { color: #ef4444; }
+        .chat-item button { background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 4px; font-size: 16px; }
+        .chat-item button:active { color: var(--danger); }
 
-        .view { display: none; max-width: 900px; margin: 0 auto; width: 100%; flex: 1; }
-        .view.active { display: flex; flex-direction: column; }
-        
-        .messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; padding-bottom: 24px; }
-        .msg { display: flex; gap: 16px; animation: fadeIn 0.3s ease; }
-        .msg.user { flex-direction: row-reverse; }
-        .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--bg-panel); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; border: 1px solid var(--border); }
-        .msg.user .avatar { background: var(--accent); color: white; border: none; }
-        .bubble { padding: 12px 16px; border-radius: 12px; font-size: 15px; line-height: 1.6; max-width: 85%; word-wrap: break-word; }
-        .msg.assistant .bubble { background: var(--bg-panel); border: 1px solid var(--border); }
-        .msg.user .bubble { background: var(--accent); color: white; }
-        .bubble pre { background: var(--bg-app); padding: 12px; border-radius: 6px; overflow-x: auto; margin: 8px 0; font-family: var(--font-mono); font-size: 13px; }
-
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-        .form-group { margin-bottom: 16px; }
-        .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; }
-        .form-input, .form-select, .form-textarea { width: 100%; padding: 10px 12px; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-main); font-family: var(--font-sans); font-size: 14px; outline: none; transition: border-color 0.2s; }
-        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
-        .form-textarea { min-height: 100px; resize: vertical; }
-        
-        .result-box { margin-top: 24px; padding: 24px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; min-height: 200px; display: flex; align-items: center; justify-content: center; position: relative; }
-        .result-box img, .result-box video { max-width: 100%; border-radius: 8px; }
-        
-        .loading-overlay { position: absolute; inset: 0; background: rgba(9, 9, 11, 0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; border-radius: 12px; z-index: 10; }
-        .progress-bar { width: 200px; height: 4px; background: var(--bg-input); border-radius: 2px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--accent); transition: width 0.3s ease; }
-        .loading-text { font-size: 13px; color: var(--text-muted); }
-
-        .input-wrapper { max-width: 800px; margin: 0 auto; position: relative; }
-        .input-box { width: 100%; padding: 14px 48px 14px 16px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: var(--text-main); font-size: 15px; font-family: var(--font-sans); resize: none; outline: none; min-height: 52px; max-height: 200px; transition: border-color 0.2s; }
-        .input-box:focus { border-color: var(--accent); }
-        .send-btn { position: absolute; right: 12px; bottom: 12px; width: 32px; height: 32px; background: var(--accent); border: none; border-radius: 6px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
-        .send-btn:hover { background: var(--accent-hover); }
-        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .input-hint { text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 8px; }
-
-        .btn { padding: 8px 16px; border-radius: var(--radius); border: none; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .sidebar-footer { padding-top: 12px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+        .btn { padding: 10px 12px; border-radius: var(--radius-sm); border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-family: var(--font-sans); touch-action: manipulation; }
         .btn-primary { background: var(--accent); color: white; }
-        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-primary:active { background: var(--accent-hover); }
         .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
-        .btn-ghost:hover { background: var(--bg-panel); color: var(--text-main); }
-        .hidden { display: none !important; }
-        .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.2); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .btn-ghost:active { background: var(--bg-hover); color: var(--text-main); }
 
-        @media (max-width: 768px) { .sidebar { display: none; } .form-grid { grid-template-columns: 1fr; } }
+        /* MOBILE HEADER */
+        .mobile-header {
+            display: none; position: fixed; top: 0; left: 0; right: 0; height: var(--header-height);
+            background: var(--bg-sidebar); border-bottom: 1px solid var(--border); z-index: 90;
+            padding: 0 16px; align-items: center; justify-content: space-between;
+        }
+        .menu-toggle { background: none; border: none; color: var(--text-main); font-size: 24px; cursor: pointer; padding: 8px; touch-action: manipulation; }
+        .mobile-logo { font-weight: 800; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+        /* MAIN AREA */
+        .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; padding-top: 0; }
+        .topbar {
+            padding: 14px 24px; background: var(--bg-sidebar); border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+        }
+        .topbar-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .topbar-title .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success); }
+        .content { flex: 1; overflow-y: auto; position: relative; padding-bottom: var(--input-height); }
+        .view { display: none; height: 100%; min-height: 100%; }
+        .view.active { display: flex; flex-direction: column; }
+
+        /* CREATE VIEW */
+        .create-layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; padding: 20px; max-width: 1400px; margin: 0 auto; width: 100%; height: 100%; overflow: hidden; }
+        .create-main { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+
+        .mode-tabs { display: flex; gap: 4px; background: var(--bg-panel); padding: 4px; border-radius: var(--radius); border: 1px solid var(--border); width: fit-content; }
+        .mode-tab { padding: 8px 16px; border-radius: var(--radius-sm); border: none; background: transparent; color: var(--text-muted); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: var(--font-sans); display: flex; align-items: center; gap: 6px; touch-action: manipulation; }
+        .mode-tab:active { background: var(--bg-hover); color: var(--text-main); }
+        .mode-tab.active { background: var(--accent); color: white; }
+
+        .style-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+        .chip { padding: 6px 12px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; color: var(--text-muted); cursor: pointer; transition: all 0.15s; touch-action: manipulation; }
+        .chip:active { background: var(--bg-hover); color: var(--text-main); border-color: var(--border-light); }
+        .chip.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+
+        .result-stage { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius); flex: 1; min-height: 300px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .result-stage img, .result-stage video { max-width: 100%; max-height: 100%; border-radius: var(--radius-sm); }
+        .result-placeholder { text-align: center; color: var(--text-dim); padding: 40px; }
+        .result-placeholder svg { width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.3; }
+        .result-placeholder h3 { font-size: 16px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+
+        .loading-overlay { position: absolute; inset: 0; background: rgba(9,9,11,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 5; }
+        .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .progress-bar { width: 200px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; }
+
+        .settings-panel { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; overflow-y: auto; display: flex; flex-direction: column; max-height: 60vh; }
+        .settings-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+        .setting-group { margin-bottom: 14px; }
+        .setting-label { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; display: block; }
+        .setting-input, .setting-select { width: 100%; padding: 10px; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-main); font-size: 13px; font-family: var(--font-sans); outline: none; transition: border-color 0.15s; }
+        .setting-input:focus, .setting-select:focus { border-color: var(--accent); }
+        .setting-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .generate-btn { width: 100%; padding: 14px; background: var(--accent); color: white; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.15s; font-family: var(--font-sans); margin-top: auto; touch-action: manipulation; }
+        .generate-btn:active { background: var(--accent-hover); }
+        .generate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* GALLERY VIEW */
+        .gallery-header { padding: 20px 24px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+        .gallery-header h2 { font-size: 18px; font-weight: 700; }
+        .gallery-filters { display: flex; gap: 8px; }
+        .filter-btn { padding: 6px 12px; background: transparent; border: 1px solid var(--border); border-radius: 20px; color: var(--text-muted); font-size: 12px; cursor: pointer; transition: all 0.15s; touch-action: manipulation; }
+        .filter-btn:active { background: var(--bg-hover); color: var(--text-main); }
+        .filter-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .gallery-grid { padding: 20px 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; overflow-y: auto; }
+        .gallery-item { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: all 0.2s; position: relative; aspect-ratio: 1; }
+        .gallery-item:active { transform: scale(0.98); border-color: var(--accent); }
+        .gallery-item img, .gallery-item video { width: 100%; height: 100%; object-fit: cover; }
+        .gallery-item .overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%); opacity: 0; transition: opacity 0.2s; display: flex; align-items: flex-end; padding: 12px; }
+        .gallery-item:active .overlay { opacity: 1; }
+        .gallery-item .meta { color: white; font-size: 11px; }
+        .gallery-item .meta strong { display: block; font-size: 12px; margin-bottom: 4px; }
+        .gallery-empty { grid-column: 1/-1; text-align: center; padding: 80px 20px; color: var(--text-dim); }
+
+        /* CHAT VIEW */
+        .chat-layout { max-width: 800px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; height: 100%; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+        .msg { display: flex; gap: 12px; animation: fadeIn 0.3s ease; }
+        .msg.user { flex-direction: row-reverse; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--bg-panel); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+        .msg.user .avatar { background: var(--accent); color: white; border: none; }
+        .bubble { padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.6; max-width: 80%; background: var(--bg-panel); border: 1px solid var(--border); word-wrap: break-word; }
+        .msg.user .bubble { background: var(--accent); color: white; border: none; }
+        .bubble pre { background: var(--bg-app); padding: 10px; border-radius: 6px; overflow-x: auto; margin: 8px 0; font-family: var(--font-mono); font-size: 12px; }
+        .chat-welcome { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+        .chat-welcome h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; background: linear-gradient(135deg, var(--accent), #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .suggestion-grid { display: grid; grid-template-columns: 1fr; gap: 10px; max-width: 600px; margin: 24px auto 0; }
+        .suggestion { padding: 12px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; color: var(--text-muted); cursor: pointer; transition: all 0.15s; text-align: left; touch-action: manipulation; }
+        .suggestion:active { border-color: var(--accent); color: var(--text-main); }
+
+        /* INPUT BAR */
+        .input-bar {
+            position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 24px;
+            background: var(--bg-sidebar); border-top: 1px solid var(--border);
+            z-index: 50;
+        }
+        .input-wrapper { max-width: 800px; margin: 0 auto; position: relative; }
+        .input-box {
+            width: 100%; padding: 14px 52px 14px 16px; background: var(--bg-input);
+            border: 1px solid var(--border); border-radius: var(--radius);
+            color: var(--text-main); font-size: 14px; font-family: var(--font-sans);
+            resize: none; outline: none; min-height: 52px; max-height: 160px;
+            transition: border-color 0.15s;
+        }
+        .input-box:focus { border-color: var(--accent); }
+        .send-btn {
+            position: absolute; right: 8px; bottom: 8px; width: 36px; height: 36px;
+            background: var(--accent); border: none; border-radius: var(--radius-sm);
+            color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.15s; touch-action: manipulation;
+        }
+        .send-btn:active { background: var(--accent-hover); transform: scale(0.95); }
+        .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        .input-hint { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 8px; }
+
+        /* TOAST & OVERLAY */
+        .toast {
+            position: fixed; top: 80px; right: 20px; padding: 12px 16px;
+            background: var(--bg-panel); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); color: var(--text-main);
+            font-size: 13px; z-index: 200; animation: slideIn 0.3s ease;
+            box-shadow: var(--shadow); max-width: calc(100% - 40px);
+        }
+        .toast.success { border-color: var(--success); }
+        .toast.error { border-color: var(--danger); }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .sidebar-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            z-index: 95; backdrop-filter: blur(2px);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .create-layout { grid-template-columns: 1fr; overflow-y: auto; padding: 16px; }
+            .settings-panel { order: -1; max-height: none; }
+            .mode-tabs { width: 100%; }
+            .mode-tab { flex: 1; justify-content: center; }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-header { display: flex; }
+            .sidebar { position: fixed; height: 100%; left: 0; top: 0; }
+            .sidebar.mobile-hidden { transform: translateX(-100%); }
+            .sidebar-overlay.active { display: block; }
+            .main { padding-top: var(--header-height); }
+            .topbar { display: none; }
+            .content { padding-bottom: calc(var(--input-height) + 20px); }
+            .create-layout { padding: 12px; gap: 12px; }
+            .create-main { gap: 12px; }
+            .style-chips { gap: 6px; }
+            .chip { padding: 4px 10px; font-size: 11px; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); padding: 12px; gap: 8px; }
+            .gallery-header { padding: 12px 16px; }
+            .gallery-header h2 { font-size: 16px; }
+            .chat-messages { padding: 16px; }
+            .bubble { max-width: 85%; font-size: 13px; padding: 10px 14px; }
+            .chat-welcome { padding: 30px 16px; }
+            .chat-welcome h1 { font-size: 20px; }
+            .suggestion-grid { grid-template-columns: 1fr; }
+            .input-bar { padding: 12px 16px; }
+            .setting-row { grid-template-columns: 1fr; }
+            .result-stage { min-height: 250px; }
+            .progress-bar { width: 150px; }
+            /* Prevent iOS zoom on input focus */
+            .input-box { font-size: 16px; } 
+        }
+
+        @media (max-width: 480px) {
+            :root { --header-height: 56px; --input-height: 64px; }
+            body { font-size: 13px; }
+            .brand-name { font-size: 12px; }
+            .nav-item { font-size: 12px; padding: 9px; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+            .mode-tab { font-size: 12px; padding: 6px 12px; }
+            .setting-input, .setting-select { padding: 8px; font-size: 12px; }
+            .generate-btn { padding: 12px; font-size: 13px; }
+            .input-box { padding: 12px 48px 12px 14px; font-size: 16px; min-height: 48px; }
+            .send-btn { width: 32px; height: 32px; right: 6px; bottom: 8px; }
+            .toast { top: 70px; right: 12px; left: 12px; max-width: none; }
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     </style>
 </head>
 <body>
 
-    <aside class="sidebar">
+    <div class="mobile-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="mobile-logo">Saint Silk</div>
+        <div style="width: 24px;"></div>
+    </div>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <aside class="sidebar mobile-hidden" id="sidebar">
         <div class="brand">
             <img src="logo.png" alt="Logo">
             <div class="brand-name">Saint Silk</div>
         </div>
-
-        <div class="nav-group">
+        <div class="nav-section">
             <div class="nav-label">Workspace</div>
-            <div class="nav-item active" onclick="switchView('chat', this)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            <div class="nav-item active" data-view="create" onclick="switchView('create', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                Create
+            </div>
+            <div class="nav-item" data-view="gallery" onclick="switchView('gallery', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                Gallery <span class="badge" id="gallery-count">0</span>
+            </div>
+            <div class="nav-item" data-view="chat" onclick="switchView('chat', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 Chat
             </div>
-            <div class="nav-item" onclick="switchView('image', this)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                Image
-            </div>
-            <div class="nav-item" onclick="switchView('video', this)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2"></rect></svg>
-                Video
-            </div>
         </div>
-
-        <div class="nav-group" style="flex: 1; display: flex; flex-direction: column;">
-            <div class="nav-label">History</div>
-            <div class="chat-list" id="chat-list">
-                <div style="padding: 12px; color: var(--text-muted); font-size: 12px;">Loading...</div>
-            </div>
+        <div class="nav-section" style="flex:1; display:flex; flex-direction:column;">
+            <div class="nav-label">Recent Chats</div>
+            <div class="chat-list" id="chat-list"><div style="padding:12px; color:var(--text-dim); font-size:11px;">Loading...</div></div>
         </div>
-        
-        <button class="btn btn-ghost" style="width: 100%; justify-content: center; margin-top: 8px;" onclick="newChat()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            New Chat
-        </button>
+        <div class="sidebar-footer">
+            <button class="btn btn-primary" onclick="newChat()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                New Chat
+            </button>
+        </div>
     </aside>
 
     <main class="main">
+        <div class="topbar">
+            <div class="topbar-title"><span class="dot"></span><span id="topbar-title">Create</span></div>
+            <div class="topbar-actions">
+                <button class="btn btn-ghost" onclick="showToast('All systems operational', 'success')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Live
+                </button>
+            </div>
+        </div>
+
         <div class="content">
-            <div id="view-chat" class="view active">
-                <div class="messages" id="chat-messages">
-                    <div style="text-align: center; margin-top: 20vh; color: var(--text-muted);">
-                        <h1 style="font-size: 24px; font-weight: 600; color: var(--text-main); margin-bottom: 8px;">How can I help you today?</h1>
-                        <p style="font-size: 14px;">Powered by Qwen 2.5 with live web crawling.</p>
+            <div id="view-create" class="view active">
+                <div class="create-layout">
+                    <div class="create-main">
+                        <div class="mode-tabs">
+                            <button class="mode-tab active" data-mode="image" onclick="setCreateMode('image', this)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Image
+                            </button>
+                            <button class="mode-tab" data-mode="video" onclick="setCreateMode('video', this)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg> Video
+                            </button>
+                        </div>
+
+                        <div class="style-chips">
+                            <span style="font-size:11px; color:var(--text-dim); margin-right:4px; align-self:center;">Styles:</span>
+                            <span class="chip" onclick="applyStyle(this, 'cinematic')">Cinematic</span>
+                            <span class="chip" onclick="applyStyle(this, 'photorealistic')">Photorealistic</span>
+                            <span class="chip" onclick="applyStyle(this, 'anime')">Anime</span>
+                            <span class="chip" onclick="applyStyle(this, 'cyberpunk')">Cyberpunk</span>
+                            <span class="chip" onclick="applyStyle(this, 'fantasy')">Fantasy</span>
+                            <span class="chip" onclick="applyStyle(this, '3d')">3D Render</span>
+                        </div>
+
+                        <div class="result-stage" id="result-stage">
+                            <div class="result-placeholder">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                <h3>Your creation will appear here</h3>
+                                <p>Use the input bar below to generate</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-panel">
+                        <div class="settings-title"><span>Settings</span><span style="font-size:10px; color:var(--text-dim);">Krea-2 / LTX-2.3</span></div>
+                        <div id="img-settings">
+                            <div class="setting-group"><label class="setting-label">Resolution</label><select class="setting-select" id="img-res"><option value="1024">1024px</option><option value="1536">1536px</option><option value="2048">2048px</option></select></div>
+                            <div class="setting-group"><label class="setting-label">Aspect Ratio</label><select class="setting-select" id="img-ar"><option value="1:1">1:1 Square</option><option value="16:9">16:9 Landscape</option><option value="9:16">9:16 Portrait</option><option value="4:3">4:3 Standard</option></select></div>
+                            <div class="setting-row">
+                                <div class="setting-group"><label class="setting-label">Steps</label><input type="number" class="setting-input" id="img-steps" value="8" min="1" max="50"></div>
+                                <div class="setting-group"><label class="setting-label">Images</label><input type="number" class="setting-input" id="img-num" value="1" min="1" max="4"></div>
+                            </div>
+                            <div class="setting-group"><label class="setting-label">Seed (-1 = random)</label><input type="number" class="setting-input" id="img-seed" value="-1"></div>
+                            <div class="setting-group"><label class="setting-label">Negative Prompt</label><input type="text" class="setting-input" id="img-neg" placeholder="What to avoid..."></div>
+                            <div class="setting-group"><label class="setting-label"><input type="checkbox" id="img-enhance" checked style="margin-right:6px;"> Auto-enhance prompt</label></div>
+                        </div>
+                        <div id="vid-settings" style="display:none;">
+                            <div class="setting-group"><label class="setting-label">Duration</label><select class="setting-select" id="vid-dur"><option value="49">2s</option><option value="73">3s</option><option value="121" selected>5s</option><option value="193">8s</option></select></div>
+                            <div class="setting-group"><label class="setting-label">Resolution</label><select class="setting-select" id="vid-res"><option value="1080p">1080p</option><option value="720p" selected>720p</option><option value="540p">540p</option></select></div>
+                            <div class="setting-group"><label class="setting-label">Aspect Ratio</label><select class="setting-select" id="vid-ar"><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="1:1">1:1</option></select></div>
+                            <div class="setting-row">
+                                <div class="setting-group"><label class="setting-label">Steps</label><input type="number" class="setting-input" id="vid-steps" value="8" min="2" max="50"></div>
+                                <div class="setting-group"><label class="setting-label">Guide Scale</label><input type="number" class="setting-input" id="vid-guide" value="3.0" step="0.5" min="1" max="8"></div>
+                            </div>
+                            <div class="setting-group"><label class="setting-label">Seed (-1 = random)</label><input type="number" class="setting-input" id="vid-seed" value="-1"></div>
+                        </div>
+                        <button class="generate-btn" id="generate-btn" onclick="triggerGenerate()">Generate</button>
                     </div>
                 </div>
             </div>
 
-            <div id="view-image" class="view">
-                <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 24px;">Image Generation</h2>
-                <div class="form-group">
-                    <label class="form-label">Prompt</label>
-                    <textarea class="form-textarea" id="img-prompt" placeholder="Describe your image in detail..."></textarea>
-                </div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Resolution</label>
-                        <select class="form-select" id="img-res">
-                            <option value="1024">1024px (Standard)</option>
-                            <option value="1536">1536px (High)</option>
-                            <option value="2048">2048px (Ultra)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Aspect Ratio</label>
-                        <select class="form-select" id="img-ar">
-                            <option value="1:1">1:1 Square</option>
-                            <option value="16:9">16:9 Landscape</option>
-                            <option value="9:16">9:16 Portrait</option>
-                            <option value="4:3">4:3 Standard</option>
-                            <option value="3:4">3:4 Portrait</option>
-                        </select>
+            <div id="view-gallery" class="view">
+                <div class="gallery-header">
+                    <h2>Your Gallery</h2>
+                    <div class="gallery-filters">
+                        <button class="filter-btn active" onclick="filterGallery('all', this)">All</button>
+                        <button class="filter-btn" onclick="filterGallery('image', this)">Images</button>
+                        <button class="filter-btn" onclick="filterGallery('video', this)">Videos</button>
                     </div>
                 </div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Steps</label>
-                        <input type="number" class="form-input" id="img-steps" value="8" min="1" max="50">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Number of Images</label>
-                        <input type="number" class="form-input" id="img-num" value="1" min="1" max="4">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Negative Prompt</label>
-                    <input type="text" class="form-input" id="img-neg" placeholder="What to avoid in the image...">
-                </div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Seed (-1 for random)</label>
-                        <input type="number" class="form-input" id="img-seed" value="-1">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Enhance Prompt</label>
-                        <select class="form-select" id="img-enhance">
-                            <option value="true">Yes (Auto-enhance)</option>
-                            <option value="false">No (Raw prompt)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="result-box" id="img-result">
-                    <div style="color: var(--text-muted);">Your image will appear here.</div>
+                <div class="gallery-grid" id="gallery-grid">
+                    <div class="gallery-empty"><h3 style="font-size:18px; margin-bottom:8px; color:var(--text-muted);">No creations yet</h3><p>Generate your first image or video</p></div>
                 </div>
             </div>
 
-            <div id="view-video" class="view">
-                <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 24px;">Video Generation</h2>
-                <div class="form-group">
-                    <label class="form-label">Prompt</label>
-                    <textarea class="form-textarea" id="vid-prompt" placeholder="Describe your video in detail..."></textarea>
-                </div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Duration</label>
-                        <select class="form-select" id="vid-dur">
-                            <option value="49">2s (49 frames)</option>
-                            <option value="73">3s (73 frames)</option>
-                            <option value="121" selected>5s (121 frames)</option>
-                            <option value="193">8s (193 frames)</option>
-                            <option value="241">10s (241 frames)</option>
-                            <option value="361">15s (361 frames)</option>
-                        </select>
+            <div id="view-chat" class="view">
+                <div class="chat-layout">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="chat-welcome">
+                            <h1>How can I help?</h1>
+                            <p>Powered by Qwen 35B with live web access</p>
+                            <div class="suggestion-grid">
+                                <div class="suggestion" onclick="useSuggestion(this)">Explain quantum computing simply</div>
+                                <div class="suggestion" onclick="useSuggestion(this)">Write a cyberpunk story opening</div>
+                                <div class="suggestion" onclick="useSuggestion(this)">What's trending in AI today?</div>
+                                <div class="suggestion" onclick="useSuggestion(this)">Help me debug Python code</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Resolution</label>
-                        <select class="form-select" id="vid-res">
-                            <option value="1080p">1080p Full HD</option>
-                            <option value="720p" selected>720p HD</option>
-                            <option value="540p">540p</option>
-                            <option value="480p">480p</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Aspect Ratio</label>
-                        <select class="form-select" id="vid-ar">
-                            <option value="16:9">16:9 Landscape</option>
-                            <option value="4:3">4:3 Standard</option>
-                            <option value="1:1">1:1 Square</option>
-                            <option value="3:4">3:4 Portrait</option>
-                            <option value="9:16">9:16 Portrait</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Guide Scale</label>
-                        <input type="number" class="form-input" id="vid-guide" value="3.0" step="0.5" min="1.0" max="8.0">
-                    </div>
-                </div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Steps</label>
-                        <input type="number" class="form-input" id="vid-steps" value="8" min="2" max="50">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Seed (-1 for random)</label>
-                        <input type="number" class="form-input" id="vid-seed" value="-1">
-                    </div>
-                </div>
-                <div class="result-box" id="vid-result">
-                    <div style="color: var(--text-muted);">Your video will appear here.</div>
                 </div>
             </div>
         </div>
 
-        <div class="input-area">
+        <div class="input-bar">
             <div class="input-wrapper">
-                <textarea class="input-box" id="main-input" placeholder="Message Saint Silk..." onkeydown="handleInput(event)"></textarea>
+                <textarea class="input-box" id="main-input" placeholder="Describe the image you want to create..." onkeydown="handleInput(event)"></textarea>
                 <button class="send-btn" onclick="handleSend()" id="send-btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                 </button>
             </div>
-            <div class="input-hint" id="input-hint">Chat Mode • Press Enter to send</div>
+            <div class="input-hint" id="input-hint">Press Enter to generate • Shift+Enter for new line</div>
         </div>
     </main>
 
@@ -282,327 +423,209 @@
         import { getFirestore, collection, doc, setDoc, deleteDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyDUYLB5q1WhJWI_xd5cOUojf6ReaaiB7wY",
-            authDomain: "unified-ai-studio.firebaseapp.com",
-            projectId: "unified-ai-studio",
-            storageBucket: "unified-ai-studio.firebasestorage.app",
-            messagingSenderId: "119336766564",
-            appId: "1:119336766564:web:6ee68eeb16147522d96371"
+            apiKey: "AIzaSyDUYLB5q1WhJWI_xd5cOUojf6ReaaiB7wY", authDomain: "unified-ai-studio.firebaseapp.com", projectId: "unified-ai-studio",
+            storageBucket: "unified-ai-studio.firebasestorage.app", messagingSenderId: "119336766564", appId: "1:119336766564:web:6ee68eeb16147522d96371"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const API = {
-            chat: "https://coroner-relock-wrath.ngrok-free.dev",
-            image: "https://concrete-gossip-outpost.ngrok-free.dev",
-            video: "https://satin-keep-cupping.ngrok-free.dev"
-        };
+        const API = { chat: "https://coroner-relock-wrath.ngrok-free.dev", image: "https://concrete-gossip-outpost.ngrok-free.dev", video: "https://satin-keep-cupping.ngrok-free.dev" };
 
-        let currentUserId = null;
-        let currentConvId = null;
-        let currentView = 'chat';
-        let conversations = [];
-        let unsubscribeChats = null;
+        let currentUserId = null, currentConvId = null, currentView = 'create', createMode = 'image';
+        let conversations = [], gallery = JSON.parse(localStorage.getItem('ss_gallery') || '[]');
+        let unsubscribeChats = null, isGenerating = false;
 
-        // 1. AUTH & LISTENER
-        signInAnonymously(auth).catch((error) => console.error("Auth Error:", error));
+        signInAnonymously(auth).catch(e => console.error(e));
+        onAuthStateChanged(auth, (user) => { if (user) { currentUserId = user.uid; setupChats(); } });
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUserId = user.uid;
-                setupRealtimeChats();
-            }
-        });
-
-        function setupRealtimeChats() {
-            if (!currentUserId) return;
+        function setupChats() {
             const q = query(collection(db, `users/${currentUserId}/chats`), orderBy("updatedAt", "desc"));
-            
             if (unsubscribeChats) unsubscribeChats();
-            
-            unsubscribeChats = onSnapshot(q, (snapshot) => {
-                const dbChats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                // MERGE STRATEGY: Keep local chats that haven't reached the DB yet
-                const localPending = conversations.filter(c => !dbChats.find(db => db.id === c.id));
-                conversations = [...dbChats, ...localPending];
-                
-                conversations.sort((a, b) => {
-                    const timeA = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : (a.updatedAt || 0);
-                    const timeB = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : (b.updatedAt || 0);
-                    return timeB - timeA;
-                });
-
+            unsubscribeChats = onSnapshot(q, (snap) => {
+                const dbChats = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                const pending = conversations.filter(c => !dbChats.find(d => d.id === c.id));
+                conversations = [...dbChats, ...pending];
+                conversations.sort((a, b) => { const tA = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : (a.updatedAt || 0); const tB = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : (b.updatedAt || 0); return tB - tA; });
                 renderChatList();
-                
-                if (currentConvId) {
-                    const activeConv = conversations.find(c => c.id === currentConvId);
-                    if (activeConv) renderMessages(activeConv);
-                } else if (conversations.length > 0) {
-                    currentConvId = conversations[0].id;
-                    renderChatList();
-                    renderMessages(conversations[0]);
-                }
-            }, (error) => {
-                console.error("Firestore listen error:", error);
+                if (currentConvId) { const active = conversations.find(c => c.id === currentConvId); if (active) renderMessages(active); }
             });
         }
 
-        // 2. ACTIONS (Optimistic UI)
-        window.newChat = async function() {
-            const newId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-            currentConvId = newId;
-
-            const newConv = { id: newId, title: 'New Chat', messages: [], updatedAt: Date.now() };
-            conversations.unshift(newConv);
-            
-            renderChatList();
-            renderMessages(newConv);
-
-            if (currentUserId) {
-                try {
-                    await setDoc(doc(db, `users/${currentUserId}/chats`, newId), { 
-                        title: 'New Chat', 
-                        messages: [], 
-                        createdAt: serverTimestamp(),
-                        updatedAt: serverTimestamp()
-                    });
-                } catch (e) { console.error("Failed to create chat:", e); }
-            }
+        window.toggleSidebar = function() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.toggle('mobile-hidden');
+            overlay.classList.toggle('active');
         };
 
-        window.loadChat = function(id) {
-            currentConvId = id;
-            renderChatList();
-            const conv = conversations.find(c => c.id === id);
-            if (conv) renderMessages(conv);
-        };
-
-        window.addMsg = async function(role, content) {
-            if (!currentConvId) return;
-
-            let conv = conversations.find(c => c.id === currentConvId);
-            if (!conv) {
-                conv = { id: currentConvId, title: 'New Chat', messages: [], updatedAt: Date.now() };
-                conversations.unshift(conv);
-            }
-
-            // 1. UPDATE LOCAL STATE INSTANTLY
-            conv.messages.push({ role, content, timestamp: Date.now() });
-            if (conv.title === 'New Chat' && role === 'user') {
-                conv.title = content.substring(0, 30) + (content.length > 30 ? '...' : '');
-            }
-            conv.updatedAt = Date.now();
-
-            // 2. RENDER INSTANTLY
-            renderMessages(conv);
-            renderChatList();
-
-            // 3. SAVE TO FIREBASE IN BACKGROUND
-            if (currentUserId) {
-                try {
-                    await setDoc(doc(db, `users/${currentUserId}/chats`, currentConvId), {
-                        messages: conv.messages,
-                        title: conv.title,
-                        updatedAt: serverTimestamp()
-                    }, { merge: true });
-                } catch (e) { 
-                    console.error("Failed to sync message:", e); 
-                }
-            }
-        };
-
-        window.deleteChat = async function(id, event) {
-            if(event) event.stopPropagation();
-            if (!confirm('Delete this chat?')) return;
-
-            conversations = conversations.filter(c => c.id !== id);
-            if (currentConvId === id) {
-                currentConvId = conversations.length > 0 ? conversations[0].id : null;
-            }
-            renderChatList();
-            if (currentConvId) {
-                renderMessages(conversations.find(c => c.id === currentConvId));
-            } else {
-                document.getElementById('chat-messages').innerHTML = `<div style="text-align: center; margin-top: 20vh; color: var(--text-muted);">
-                    <h1 style="font-size: 24px; font-weight: 600; color: var(--text-main); margin-bottom: 8px;">No chats yet.</h1>
-                </div>`;
-            }
-
-            if (currentUserId) {
-                try { await deleteDoc(doc(db, `users/${currentUserId}/chats`, id)); } 
-                catch (e) { console.error("Failed to delete:", e); }
-            }
-        };
-
-        // 3. RENDERING
-        function renderChatList() {
-            const list = document.getElementById('chat-list');
-            if (!list) return;
-            list.innerHTML = conversations.map(c => `
-                <div class="chat-item ${c.id === currentConvId ? 'active' : ''}" onclick="loadChat('${c.id}')">
-                    <span>${c.title || 'New Chat'}</span>
-                    <button onclick="deleteChat('${c.id}', event)" title="Delete">×</button>
-                </div>
-            `).join('');
-        }
-
-        function renderMessages(conv) {
-            const container = document.getElementById('chat-messages');
-            if (!container) return;
-            
-            if (!conv || !conv.messages || conv.messages.length === 0) {
-                container.innerHTML = `<div style="text-align: center; margin-top: 20vh; color: var(--text-muted);">
-                    <h1 style="font-size: 24px; font-weight: 600; color: var(--text-main); margin-bottom: 8px;">How can I help you today?</h1>
-                    <p style="font-size: 14px;">Powered by Qwen 2.5 with live web crawling.</p>
-                </div>`;
-                return;
-            }
-
-            container.innerHTML = conv.messages.map(m => `
-                <div class="msg ${m.role}">
-                    <div class="avatar">${m.role === 'user' ? 'U' : 'AI'}</div>
-                    <div class="bubble">${m.content.replace(/\n/g, '<br>').replace(/```([\s\S]*?)```/g, '<pre>$1</pre>')}</div>
-                </div>
-            `).join('');
-            container.scrollTop = container.scrollHeight;
-        }
-
-        // 4. UI CONTROLS
         window.switchView = function(view, el) {
             currentView = view;
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(`view-${view}`).classList.add('active');
-            
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            if(el) el.classList.add('active');
-
-            const hints = { 
-                chat: 'Chat Mode • Press Enter to send', 
-                image: 'Image Mode • Type prompt and press Enter to generate', 
-                video: 'Video Mode • Type prompt and press Enter to generate' 
-            };
-            document.getElementById('input-hint').textContent = hints[view];
-            
-            const placeholders = { 
-                chat: 'Message Saint Silk...', 
-                image: 'Describe the image you want to create...', 
-                video: 'Describe the video you want to create...' 
-            };
-            document.getElementById('main-input').placeholder = placeholders[view];
-            document.getElementById('main-input').value = '';
+            if (el) el.classList.add('active'); else { const navEl = document.querySelector(`.nav-item[data-view="${view}"]`); if (navEl) navEl.classList.add('active'); }
+            const titles = { create: 'Create', gallery: 'Gallery', chat: 'Chat' };
+            document.getElementById('topbar-title').textContent = titles[view];
+            updateInputPlaceholder();
+            if (view === 'gallery') renderGallery();
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.add('mobile-hidden');
+                document.querySelector('.sidebar-overlay').classList.remove('active');
+            }
         };
+
+        window.setCreateMode = function(mode, el) {
+            createMode = mode;
+            document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('img-settings').style.display = mode === 'image' ? 'block' : 'none';
+            document.getElementById('vid-settings').style.display = mode === 'video' ? 'block' : 'none';
+            updateInputPlaceholder();
+        };
+
+        function updateInputPlaceholder() {
+            const input = document.getElementById('main-input');
+            const hint = document.getElementById('input-hint');
+            if (currentView === 'chat') { input.placeholder = 'Message the AI...'; hint.textContent = 'Press Enter to send • Shift+Enter for new line'; }
+            else if (currentView === 'create') { input.placeholder = createMode === 'image' ? 'Describe the image you want to create...' : 'Describe the video scene...'; hint.textContent = `Press Enter to generate ${createMode}`; }
+        }
+
+        const STYLE_KEYWORDS = {
+            cinematic: ', cinematic lighting, dramatic shadows, film grain, 8k, masterpiece', photorealistic: ', photorealistic, highly detailed, natural lighting, 8k, sharp focus',
+            anime: ', anime style, vibrant colors, clean line art, masterpiece, detailed', cyberpunk: ', cyberpunk, neon lights, futuristic, rain, reflections, 8k',
+            fantasy: ', fantasy art, magical atmosphere, ethereal lighting, detailed, 8k', '3d': ', 3D render, octane render, Unreal Engine, highly detailed, 8k'
+        };
+
+        window.applyStyle = function(el, style) {
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            const input = document.getElementById('main-input');
+            let text = input.value;
+            Object.values(STYLE_KEYWORDS).forEach(kw => { text = text.replace(kw, ''); });
+            input.value = text + STYLE_KEYWORDS[style];
+            input.focus();
+        };
+
+        window.triggerGenerate = function() {
+            const input = document.getElementById('main-input');
+            const text = input.value.trim();
+            if (!text) { showToast('Please enter a prompt in the input bar', 'error'); return; }
+            handleGenerate(text);
+        };
+
+        window.handleGenerate = async function(prompt) {
+            if (isGenerating) return;
+            if (!prompt) return;
+            isGenerating = true;
+            const btn = document.getElementById('generate-btn');
+            const stage = document.getElementById('result-stage');
+            btn.disabled = true;
+            stage.innerHTML = `<div class="loading-overlay"><div class="spinner"></div><div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div><div class="loading-text">${createMode === 'image' ? 'Generating image' : 'Rendering video'}...</div></div>`;
+            let progress = 0;
+            const progressInterval = setInterval(() => { progress += Math.random() * 8; if (progress > 92) progress = 92; const fill = document.getElementById('progress-fill'); if (fill) fill.style.width = progress + '%'; }, 1500);
+
+            try {
+                const formData = new FormData();
+                formData.append('prompt', prompt);
+                if (createMode === 'image') {
+                    formData.append('resolution', document.getElementById('img-res').value); formData.append('aspect_ratio', document.getElementById('img-ar').value);
+                    formData.append('steps', document.getElementById('img-steps').value); formData.append('num_images', document.getElementById('img-num').value);
+                    formData.append('seed', document.getElementById('img-seed').value); formData.append('negative_prompt', document.getElementById('img-neg').value);
+                    formData.append('enhance_prompt', document.getElementById('img-enhance').checked ? 'true' : 'false'); formData.append('style_preset', 'None'); formData.append('lora_name', 'None');
+                    const res = await fetch(`${API.image}/generate`, { method: 'POST', body: formData }); const data = await res.json(); clearInterval(progressInterval);
+                    if (data.error) throw new Error(data.error);
+                    if (data.result_urls && data.result_urls.length > 0) {
+                        stage.innerHTML = `<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; padding:16px; width:100%;">${data.result_urls.map(url => { const fullUrl = `${API.image}${url}`; addToGallery(fullUrl, 'image', prompt); return `<img src="${fullUrl}" style="width:100%; border-radius:8px; cursor:pointer;" onclick="window.open(this.src)">`; }).join('')}</div>`;
+                    } else if (data.result_url) { const fullUrl = `${API.image}${data.result_url}`; addToGallery(fullUrl, 'image', prompt); stage.innerHTML = `<img src="${fullUrl}" style="max-width:100%; max-height:100%; border-radius:8px;" onclick="window.open(this.src)">`; }
+                    else throw new Error('No result returned');
+                    showToast('Image generated successfully', 'success');
+                } else {
+                    formData.append('duration', document.getElementById('vid-dur').value); formData.append('resolution', document.getElementById('vid-res').value);
+                    formData.append('aspect_ratio', document.getElementById('vid-ar').value); formData.append('steps', document.getElementById('vid-steps').value);
+                    formData.append('guide_scale', document.getElementById('vid-guide').value); formData.append('seed', document.getElementById('vid-seed').value); formData.append('lora_name', 'None');
+                    const res = await fetch(`${API.video}/generate`, { method: 'POST', body: formData }); const data = await res.json(); clearInterval(progressInterval);
+                    if (data.error) throw new Error(data.error);
+                    if (data.result_url) { const fullUrl = `${API.video}${data.result_url}`; addToGallery(fullUrl, 'video', prompt); stage.innerHTML = `<video controls autoplay loop src="${fullUrl}" style="max-width:100%; max-height:100%; border-radius:8px;"></video>`; showToast('Video generated successfully', 'success'); }
+                    else throw new Error('No result returned');
+                }
+            } catch (e) { clearInterval(progressInterval); stage.innerHTML = `<div class="result-placeholder"><h3 style="color:var(--danger);">Generation failed</h3><p>${e.message}</p></div>`; showToast('Generation failed: ' + e.message, 'error'); }
+            finally { isGenerating = false; btn.disabled = false; }
+        };
+
+        function addToGallery(url, type, prompt) {
+            gallery.unshift({ id: Date.now().toString(36), url, type, prompt, createdAt: Date.now() });
+            if (gallery.length > 100) gallery = gallery.slice(0, 100);
+            localStorage.setItem('ss_gallery', JSON.stringify(gallery));
+            document.getElementById('gallery-count').textContent = gallery.length;
+        }
+
+        function renderGallery(filter = 'all') {
+            const grid = document.getElementById('gallery-grid');
+            const filtered = filter === 'all' ? gallery : gallery.filter(g => g.type === filter);
+            document.getElementById('gallery-count').textContent = gallery.length;
+            if (filtered.length === 0) { grid.innerHTML = `<div class="gallery-empty"><h3 style="font-size:18px; margin-bottom:8px; color:var(--text-muted);">No ${filter === 'all' ? '' : filter} creations yet</h3><p>Generate something to see it here</p></div>`; return; }
+            grid.innerHTML = filtered.map(item => `<div class="gallery-item" onclick="openGalleryItem('${item.id}')">${item.type === 'image' ? `<img src="${item.url}" loading="lazy">` : `<video src="${item.url}" muted></video>`}<div class="overlay"><div class="meta"><strong>${item.type === 'image' ? 'Image' : 'Video'}</strong><div>${item.prompt ? item.prompt.substring(0, 60) + '...' : 'No prompt'}</div></div></div></div>`).join('');
+        }
+
+        window.filterGallery = function(filter, el) { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); renderGallery(filter); };
+        window.openGalleryItem = function(id) { const item = gallery.find(g => g.id === id); if (!item) return; if (item.type === 'image') window.open(item.url); else { const w = window.open('', '_blank'); w.document.write(`<html><body style="margin:0; background:#000; display:flex; align-items:center; justify-content:center; height:100vh;"><video src="${item.url}" controls autoplay style="max-width:100%; max-height:100%;"></video></body></html>`); } };
+
+        window.newChat = async function() {
+            const newId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+            currentConvId = newId;
+            const newConv = { id: newId, title: 'New Chat', messages: [], updatedAt: Date.now() };
+            conversations.unshift(newConv); renderChatList(); renderMessages(newConv);
+            if (currentUserId) { try { await setDoc(doc(db, `users/${currentUserId}/chats`, newId), { title: 'New Chat', messages: [], createdAt: serverTimestamp(), updatedAt: serverTimestamp() }); } catch (e) { console.error(e); } }
+            if (currentView !== 'chat') { const chatNav = document.querySelector('.nav-item[data-view="chat"]'); switchView('chat', chatNav); }
+        };
+
+        window.loadChat = function(id) { currentConvId = id; renderChatList(); const conv = conversations.find(c => c.id === id); if (conv) renderMessages(conv); if (currentView !== 'chat') { const chatNav = document.querySelector('.nav-item[data-view="chat"]'); switchView('chat', chatNav); } };
+        window.deleteChat = async function(id, event) { if (event) event.stopPropagation(); if (!confirm('Delete this chat?')) return; conversations = conversations.filter(c => c.id !== id); if (currentConvId === id) currentConvId = conversations.length > 0 ? conversations[0].id : null; renderChatList(); if (currentConvId) { const conv = conversations.find(c => c.id === currentConvId); if (conv) renderMessages(conv); } if (currentUserId) { try { await deleteDoc(doc(db, `users/${currentUserId}/chats`, id)); } catch (e) {} } };
+
+        async function addMsg(role, content) {
+            if (!currentConvId) return;
+            let conv = conversations.find(c => c.id === currentConvId);
+            if (!conv) { conv = { id: currentConvId, title: 'New Chat', messages: [], updatedAt: Date.now() }; conversations.unshift(conv); }
+            conv.messages.push({ role, content, timestamp: Date.now() });
+            if (conv.title === 'New Chat' && role === 'user') { conv.title = content.substring(0, 30) + (content.length > 30 ? '...' : ''); }
+            conv.updatedAt = Date.now(); renderMessages(conv); renderChatList();
+            if (currentUserId) { try { await setDoc(doc(db, `users/${currentUserId}/chats`, currentConvId), { messages: conv.messages, title: conv.title, updatedAt: serverTimestamp() }, { merge: true }); } catch (e) { console.error(e); } }
+        }
+
+        function renderChatList() { const list = document.getElementById('chat-list'); if (!list) return; if (conversations.length === 0) { list.innerHTML = `<div style="padding:12px; color:var(--text-dim); font-size:11px;">No chats yet</div>`; return; } list.innerHTML = conversations.map(c => `<div class="chat-item ${c.id === currentConvId ? 'active' : ''}" onclick="loadChat('${c.id}')"><span>${c.title || 'New Chat'}</span><button onclick="deleteChat('${c.id}', event)" title="Delete">×</button></div>`).join(''); }
+        function renderMessages(conv) { const container = document.getElementById('chat-messages'); if (!container) return; if (!conv || !conv.messages || conv.messages.length === 0) { container.innerHTML = `<div class="chat-welcome"><h1>How can I help?</h1><p>Powered by Qwen 35B with live web access</p><div class="suggestion-grid"><div class="suggestion" onclick="useSuggestion(this)">Explain quantum computing simply</div><div class="suggestion" onclick="useSuggestion(this)">Write a cyberpunk story opening</div><div class="suggestion" onclick="useSuggestion(this)">What's trending in AI today?</div><div class="suggestion" onclick="useSuggestion(this)">Help me debug Python code</div></div></div>`; return; } container.innerHTML = conv.messages.map(m => `<div class="msg ${m.role}"><div class="avatar">${m.role === 'user' ? 'U' : 'AI'}</div><div class="bubble">${m.content.replace(/\n/g, '<br>').replace(/```([\s\S]*?)```/g, '<pre>$1</pre>')}</div></div>`).join(''); container.scrollTop = container.scrollHeight; }
+
+        window.useSuggestion = function(el) { const text = el.textContent; document.getElementById('main-input').value = text; handleSend(); };
 
         window.handleSend = async function() {
             const input = document.getElementById('main-input');
             const text = input.value.trim();
             if (!text) return;
-            
+
             if (currentView === 'chat') {
-                if (!currentConvId) await window.newChat();
-                window.addMsg('user', text);
-                input.value = '';
-                
-                const btn = document.getElementById('send-btn');
-                btn.disabled = true;
-                
+                if (!currentConvId) await newChat();
+                await addMsg('user', text); input.value = '';
+                const btn = document.getElementById('send-btn'); btn.disabled = true;
                 const conv = conversations.find(c => c.id === currentConvId);
                 const messagesForApi = conv ? conv.messages.map(m => ({role: m.role, content: m.content})) : [{role: 'user', content: text}];
-
                 const container = document.getElementById('chat-messages');
-                const loading = document.createElement('div');
-                loading.className = 'msg assistant';
-                loading.innerHTML = `<div class="avatar">AI</div><div class="bubble"><div class="spinner"></div></div>`;
-                container.appendChild(loading);
-                container.scrollTop = container.scrollHeight;
-
+                const loading = document.createElement('div'); loading.className = 'msg assistant'; loading.innerHTML = `<div class="avatar">AI</div><div class="bubble"><div class="spinner" style="width:16px; height:16px;"></div></div>`; container.appendChild(loading); container.scrollTop = container.scrollHeight;
                 try {
-                    const formData = new FormData();
-                    formData.append('messages', JSON.stringify(messagesForApi));
-                    formData.append('search_web', 'true');
-                    
-                    const res = await fetch(`${API.chat}/generate_chat`, { method: 'POST', body: formData });
-                    const data = await res.json();
-                    loading.remove();
-                    window.addMsg('assistant', data.result_text || 'No response.');
-                } catch (e) {
-                    loading.remove();
-                    window.addMsg('assistant', `Error: ${e.message}`);
-                } finally { 
-                    btn.disabled = false; 
-                }
-            } 
-            else if (currentView === 'image') {
-                await generateImage(text);
-                input.value = '';
-            } 
-            else if (currentView === 'video') {
-                await generateVideo(text);
-                input.value = '';
+                    const formData = new FormData(); formData.append('messages', JSON.stringify(messagesForApi)); formData.append('search_web', 'true');
+                    const res = await fetch(`${API.chat}/generate_chat`, { method: 'POST', body: formData }); const data = await res.json(); loading.remove();
+                    await addMsg('assistant', data.result_text || 'No response.');
+                } catch (e) { loading.remove(); await addMsg('assistant', `Error: ${e.message}`); } finally { btn.disabled = false; }
+            } else if (currentView === 'create') {
+                handleGenerate(text); input.value = '';
             }
         };
 
-        window.handleInput = function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) { 
-                e.preventDefault(); 
-                window.handleSend(); 
-            }
-        };
+        window.handleInput = function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } };
+        window.showToast = function(msg, type = 'success') { const toast = document.createElement('div'); toast.className = `toast ${type}`; toast.textContent = msg; document.body.appendChild(toast); setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(20px)'; toast.style.transition = 'all 0.3s'; }, 2500); setTimeout(() => toast.remove(), 2800); };
 
-        window.generateImage = async function(prompt) {
-            const btn = document.getElementById('send-btn');
-            const resBox = document.getElementById('img-result');
-            btn.disabled = true;
-            resBox.innerHTML = '<div class="spinner"></div>';
-
-            const formData = new FormData();
-            formData.append('prompt', prompt);
-            formData.append('resolution', document.getElementById('img-res').value);
-            formData.append('aspect_ratio', document.getElementById('img-ar').value);
-            formData.append('steps', document.getElementById('img-steps').value);
-            formData.append('num_images', document.getElementById('img-num').value);
-            formData.append('seed', document.getElementById('img-seed').value);
-            formData.append('negative_prompt', document.getElementById('img-neg').value);
-            formData.append('enhance_prompt', document.getElementById('img-enhance').value);
-
-            try {
-                const res = await fetch(`${API.image}/generate`, { method: 'POST', body: formData });
-                const data = await res.json();
-                if (data.result_url) {
-                    resBox.innerHTML = `<img src="${API.image}${data.result_url}" style="max-width:100%; border-radius:8px;">`;
-                } else if (data.result_urls) {
-                    resBox.innerHTML = `<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:16px;">${data.result_urls.map(url => `<img src="${API.image}${url}" style="width:100%; border-radius:8px;">`).join('')}</div>`;
-                } else { resBox.innerHTML = 'Failed to generate.'; }
-            } catch (e) { resBox.innerHTML = `Error: ${e.message}`; }
-            finally { btn.disabled = false; }
-        };
-
-        window.generateVideo = async function(prompt) {
-            const btn = document.getElementById('send-btn');
-            const resBox = document.getElementById('vid-result');
-            btn.disabled = true;
-            resBox.innerHTML = '<div class="spinner"></div>';
-
-            const formData = new FormData();
-            formData.append('prompt', prompt);
-            formData.append('duration', document.getElementById('vid-dur').value);
-            formData.append('resolution', document.getElementById('vid-res').value);
-            formData.append('aspect_ratio', document.getElementById('vid-ar').value);
-            formData.append('guide_scale', document.getElementById('vid-guide').value);
-            formData.append('steps', document.getElementById('vid-steps').value);
-            formData.append('seed', document.getElementById('vid-seed').value);
-
-            try {
-                const res = await fetch(`${API.video}/generate`, { method: 'POST', body: formData });
-                const data = await res.json();
-                if (data.result_url) {
-                    resBox.innerHTML = `<video controls src="${API.video}${data.result_url}" style="max-width:100%; border-radius:8px;"></video>`;
-                } else { resBox.innerHTML = 'Failed to generate.'; }
-            } catch (e) { resBox.innerHTML = `Error: ${e.message}`; }
-            finally { btn.disabled = false; }
-        };
+        renderGallery(); document.getElementById('gallery-count').textContent = gallery.length; updateInputPlaceholder();
     </script>
 </body>
 </html>
