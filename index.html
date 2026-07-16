@@ -14,7 +14,7 @@
             --accent-soft: rgba(168, 85, 247, 0.15); --success: #10b981; --danger: #ef4444;
             --radius: 10px; --radius-sm: 6px; --font-sans: 'Inter', -apple-system, sans-serif;
             --font-mono: 'JetBrains Mono', monospace; --shadow: 0 4px 20px rgba(0,0,0,0.4);
-            --header-height: 60px; --input-height: 70px;
+            --header-height: 60px;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body { height: 100%; overflow: hidden; }
@@ -50,11 +50,13 @@
         .menu-toggle { background: none; border: none; color: var(--text-main); font-size: 24px; cursor: pointer; padding: 8px; touch-action: manipulation; }
         .mobile-logo { font-weight: 800; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; }
 
-        .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; padding-top: 0; }
+        .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; padding-top: 0; height: 100%; }
         .topbar { padding: 14px 24px; background: var(--bg-sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
         .topbar-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
         .topbar-title .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success); }
-        .content { flex: 1; overflow-y: auto; position: relative; padding-bottom: var(--input-height); }
+        
+        /* 🌟 FIX: Removed padding-bottom, let flexbox handle the spacing naturally */
+        .content { flex: 1; overflow-y: auto; position: relative; }
         .view { display: none; height: 100%; min-height: 100%; }
         .view.active { display: flex; flex-direction: column; }
 
@@ -121,11 +123,29 @@
         .suggestion { padding: 12px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; color: var(--text-muted); cursor: pointer; transition: all 0.15s; text-align: left; touch-action: manipulation; }
         .suggestion:active { border-color: var(--accent); color: var(--text-main); }
 
-        .input-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 24px; background: var(--bg-sidebar); border-top: 1px solid var(--border); z-index: 50; }
+        /* 🌟 FIX: Natural Flexbox layout, NO position: fixed */
+        .input-bar {
+            padding: 16px 24px;
+            background: var(--bg-sidebar);
+            border-top: 1px solid var(--border);
+            flex-shrink: 0; /* Prevents it from shrinking, guarantees it stays at the bottom */
+            z-index: 50;
+        }
         .input-wrapper { max-width: 800px; margin: 0 auto; position: relative; }
-        .input-box { width: 100%; padding: 14px 52px 14px 16px; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-main); font-size: 14px; font-family: var(--font-sans); resize: none; outline: none; min-height: 52px; max-height: 160px; transition: border-color 0.15s; }
+        .input-box {
+            width: 100%; padding: 14px 52px 14px 16px; background: var(--bg-input);
+            border: 1px solid var(--border); border-radius: var(--radius);
+            color: var(--text-main); font-size: 14px; font-family: var(--font-sans);
+            resize: none; outline: none; min-height: 52px; max-height: 160px;
+            transition: border-color 0.15s;
+        }
         .input-box:focus { border-color: var(--accent); }
-        .send-btn { position: absolute; right: 8px; bottom: 8px; width: 36px; height: 36px; background: var(--accent); border: none; border-radius: var(--radius-sm); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; touch-action: manipulation; }
+        .send-btn {
+            position: absolute; right: 8px; bottom: 8px; width: 36px; height: 36px;
+            background: var(--accent); border: none; border-radius: var(--radius-sm);
+            color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.15s; touch-action: manipulation;
+        }
         .send-btn:active { background: var(--accent-hover); transform: scale(0.95); }
         .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
         .input-hint { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 8px; }
@@ -149,7 +169,6 @@
             .sidebar-overlay.active { display: block; }
             .main { padding-top: var(--header-height); }
             .topbar { display: none; }
-            .content { padding-bottom: calc(var(--input-height) + 20px); }
             .create-layout { padding: 12px; gap: 12px; }
             .create-main { gap: 12px; }
             .style-chips { gap: 6px; }
@@ -169,7 +188,7 @@
             .input-box { font-size: 16px; } 
         }
         @media (max-width: 480px) {
-            :root { --header-height: 56px; --input-height: 64px; }
+            :root { --header-height: 56px; }
             body { font-size: 13px; }
             .brand-name { font-size: 12px; }
             .nav-item { font-size: 12px; padding: 9px; }
@@ -305,7 +324,7 @@
                     <div class="chat-messages" id="chat-messages">
                         <div class="chat-welcome">
                             <h1>How can I help?</h1>
-                            <p>Powered by Dolphin 2.9 (Uncensored) with live web access</p>
+                            <p>Powered by Qwen 2.5 with live web access</p>
                             <div class="suggestion-grid">
                                 <div class="suggestion" onclick="useSuggestion(this)">Explain quantum computing simply</div>
                                 <div class="suggestion" onclick="useSuggestion(this)">Write a cyberpunk story opening</div>
@@ -347,7 +366,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // 🌟 UPDATE THESE URLs WITH YOUR KAGGLE NOTEBOOK URLS ONCE THEY ARE RUNNING
         const API = { 
             chat: "https://coroner-relock-wrath.ngrok-free.dev", 
             image: "https://concrete-gossip-outpost.ngrok-free.dev", 
@@ -366,11 +384,23 @@
             if (unsubscribeChats) unsubscribeChats();
             unsubscribeChats = onSnapshot(q, (snap) => {
                 const dbChats = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                const pending = conversations.filter(c => !dbChats.find(d => d.id === c.id));
-                conversations = [...dbChats, ...pending];
-                conversations.sort((a, b) => { const tA = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : (a.updatedAt || 0); const tB = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : (b.updatedAt || 0); return tB - tA; });
+                conversations = dbChats.map(dbChat => {
+                    const localChat = conversations.find(c => c.id === dbChat.id);
+                    const dbTime = dbChat.updatedAt?.toMillis ? dbChat.updatedAt.toMillis() : (dbChat.updatedAt || 0);
+                    const localTime = localChat ? (localChat.updatedAt || 0) : 0;
+                    if (localChat && localTime > dbTime) return localChat;
+                    return dbChat;
+                });
+                conversations.sort((a, b) => {
+                    const tA = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : (a.updatedAt || 0);
+                    const tB = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : (b.updatedAt || 0);
+                    return tB - tA;
+                });
                 renderChatList();
-                if (currentConvId) { const active = conversations.find(c => c.id === currentConvId); if (active) renderMessages(active); }
+                if (!isGenerating && currentConvId) {
+                    const active = conversations.find(c => c.id === currentConvId);
+                    if (active) renderMessages(active);
+                }
             }, (err) => console.error("Firestore error:", err));
         }
 
@@ -469,7 +499,6 @@
                 
                 const endpoint = createMode === 'image' ? API.image : API.video;
                 const res = await fetch(`${endpoint}/generate`, { method: 'POST', body: formData });
-                
                 if (!res.ok) throw new Error(`Server returned ${res.status}. Is your Kaggle notebook running?`);
                 const data = await res.json(); 
                 clearInterval(progressInterval);
@@ -562,7 +591,7 @@
             const container = document.getElementById('chat-messages'); 
             if (!container) return; 
             if (!conv || !conv.messages || conv.messages.length === 0) { 
-                container.innerHTML = `<div class="chat-welcome"><h1>How can I help?</h1><p>Powered by Dolphin 2.9 (Uncensored) with live web access</p><div class="suggestion-grid"><div class="suggestion" onclick="useSuggestion(this)">Explain quantum computing simply</div><div class="suggestion" onclick="useSuggestion(this)">Write a cyberpunk story opening</div><div class="suggestion" onclick="useSuggestion(this)">What's trending in AI today?</div><div class="suggestion" onclick="useSuggestion(this)">Help me debug Python code</div></div></div>`; 
+                container.innerHTML = `<div class="chat-welcome"><h1>How can I help?</h1><p>Powered by Qwen 2.5 with live web access</p><div class="suggestion-grid"><div class="suggestion" onclick="useSuggestion(this)">Explain quantum computing simply</div><div class="suggestion" onclick="useSuggestion(this)">Write a cyberpunk story opening</div><div class="suggestion" onclick="useSuggestion(this)">What's trending in AI today?</div><div class="suggestion" onclick="useSuggestion(this)">Help me debug Python code</div></div></div>`; 
                 return; 
             } 
             container.innerHTML = conv.messages.map(m => `<div class="msg ${m.role}"><div class="avatar">${m.role === 'user' ? 'U' : 'AI'}</div><div class="bubble">${m.content.replace(/\n/g, '<br>').replace(/```([\s\S]*?)```/g, '<pre>$1</pre>')}</div></div>`).join(''); 
@@ -578,19 +607,35 @@
 
             if (currentView === 'chat') {
                 if (!currentConvId) await newChat();
-                await addMsg('user', text); input.value = '';
+                isGenerating = true; 
+                await addMsg('user', text);
+                input.value = '';
                 const btn = document.getElementById('send-btn'); btn.disabled = true;
-                const conv = conversations.find(c => c.id === currentConvId);
-                const messagesForApi = conv ? conv.messages.map(m => ({role: m.role, content: m.content})) : [{role: 'user', content: text}];
                 const container = document.getElementById('chat-messages');
-                const loading = document.createElement('div'); loading.className = 'msg assistant'; loading.innerHTML = `<div class="avatar">AI</div><div class="bubble"><div class="spinner" style="width:16px; height:16px;"></div></div>`; container.appendChild(loading); container.scrollTop = container.scrollHeight;
+                const loadingId = 'loading-' + Date.now();
+                const loadingDiv = document.createElement('div');
+                loadingDiv.id = loadingId;
+                loadingDiv.className = 'msg assistant';
+                loadingDiv.innerHTML = `<div class="avatar">AI</div><div class="bubble"><div class="spinner" style="width:16px; height:16px;"></div></div>`;
+                container.appendChild(loadingDiv);
+                container.scrollTop = container.scrollHeight;
+
+                const conv = conversations.find(c => c.id === currentConvId);
+                const messagesForApi = conv ? conv.messages.filter(m => m.role !== 'loading').map(m => ({role: m.role, content: m.content})) : [{role: 'user', content: text}];
                 try {
                     const formData = new FormData(); formData.append('messages', JSON.stringify(messagesForApi)); formData.append('search_web', 'true');
                     const res = await fetch(`${API.chat}/generate_chat`, { method: 'POST', body: formData });
                     if (!res.ok) throw new Error(`Server returned ${res.status}. Is your Kaggle notebook running?`);
-                    const data = await res.json(); loading.remove();
+                    const data = await res.json(); 
+                    const loader = document.getElementById(loadingId); if (loader) loader.remove();
                     await addMsg('assistant', data.result_text || 'No response.');
-                } catch (e) { loading.remove(); await addMsg('assistant', `Error: ${e.message}`); } finally { btn.disabled = false; }
+                } catch (e) { 
+                    const loader = document.getElementById(loadingId); if (loader) loader.remove();
+                    await addMsg('assistant', `Error: ${e.message}`); 
+                } finally { 
+                    isGenerating = false; 
+                    btn.disabled = false; 
+                }
             } else if (currentView === 'create') {
                 handleGenerate(text); input.value = '';
             }
