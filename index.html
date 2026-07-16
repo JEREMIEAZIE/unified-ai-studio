@@ -54,8 +54,6 @@
         .topbar { padding: 14px 24px; background: var(--bg-sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
         .topbar-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
         .topbar-title .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success); }
-        
-        /* 🌟 FIX: Removed padding-bottom, let flexbox handle the spacing naturally */
         .content { flex: 1; overflow-y: auto; position: relative; }
         .view { display: none; height: 100%; min-height: 100%; }
         .view.active { display: flex; flex-direction: column; }
@@ -123,29 +121,11 @@
         .suggestion { padding: 12px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; color: var(--text-muted); cursor: pointer; transition: all 0.15s; text-align: left; touch-action: manipulation; }
         .suggestion:active { border-color: var(--accent); color: var(--text-main); }
 
-        /* 🌟 FIX: Natural Flexbox layout, NO position: fixed */
-        .input-bar {
-            padding: 16px 24px;
-            background: var(--bg-sidebar);
-            border-top: 1px solid var(--border);
-            flex-shrink: 0; /* Prevents it from shrinking, guarantees it stays at the bottom */
-            z-index: 50;
-        }
+        .input-bar { padding: 16px 24px; background: var(--bg-sidebar); border-top: 1px solid var(--border); flex-shrink: 0; z-index: 50; }
         .input-wrapper { max-width: 800px; margin: 0 auto; position: relative; }
-        .input-box {
-            width: 100%; padding: 14px 52px 14px 16px; background: var(--bg-input);
-            border: 1px solid var(--border); border-radius: var(--radius);
-            color: var(--text-main); font-size: 14px; font-family: var(--font-sans);
-            resize: none; outline: none; min-height: 52px; max-height: 160px;
-            transition: border-color 0.15s;
-        }
+        .input-box { width: 100%; padding: 14px 52px 14px 16px; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-main); font-size: 14px; font-family: var(--font-sans); resize: none; outline: none; min-height: 52px; max-height: 160px; transition: border-color 0.15s; }
         .input-box:focus { border-color: var(--accent); }
-        .send-btn {
-            position: absolute; right: 8px; bottom: 8px; width: 36px; height: 36px;
-            background: var(--accent); border: none; border-radius: var(--radius-sm);
-            color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: all 0.15s; touch-action: manipulation;
-        }
+        .send-btn { position: absolute; right: 8px; bottom: 8px; width: 36px; height: 36px; background: var(--accent); border: none; border-radius: var(--radius-sm); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; touch-action: manipulation; }
         .send-btn:active { background: var(--accent-hover); transform: scale(0.95); }
         .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
         .input-hint { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 8px; }
@@ -605,12 +585,18 @@
             const text = input.value.trim();
             if (!text) return;
 
+            // 🌟 INSTANT CLEAR: Prevent double-sending by clearing immediately
+            input.value = '';
+            input.style.height = 'auto'; // Reset textarea height if it had expanded
+
             if (currentView === 'chat') {
                 if (!currentConvId) await newChat();
                 isGenerating = true; 
                 await addMsg('user', text);
-                input.value = '';
-                const btn = document.getElementById('send-btn'); btn.disabled = true;
+                
+                const btn = document.getElementById('send-btn'); 
+                btn.disabled = true;
+                
                 const container = document.getElementById('chat-messages');
                 const loadingId = 'loading-' + Date.now();
                 const loadingDiv = document.createElement('div');
@@ -622,22 +608,30 @@
 
                 const conv = conversations.find(c => c.id === currentConvId);
                 const messagesForApi = conv ? conv.messages.filter(m => m.role !== 'loading').map(m => ({role: m.role, content: m.content})) : [{role: 'user', content: text}];
+                
                 try {
-                    const formData = new FormData(); formData.append('messages', JSON.stringify(messagesForApi)); formData.append('search_web', 'true');
+                    const formData = new FormData(); 
+                    formData.append('messages', JSON.stringify(messagesForApi)); 
+                    formData.append('search_web', 'true');
+                    
                     const res = await fetch(`${API.chat}/generate_chat`, { method: 'POST', body: formData });
                     if (!res.ok) throw new Error(`Server returned ${res.status}. Is your Kaggle notebook running?`);
+                    
                     const data = await res.json(); 
-                    const loader = document.getElementById(loadingId); if (loader) loader.remove();
+                    const loader = document.getElementById(loadingId);
+                    if (loader) loader.remove();
+                    
                     await addMsg('assistant', data.result_text || 'No response.');
                 } catch (e) { 
-                    const loader = document.getElementById(loadingId); if (loader) loader.remove();
+                    const loader = document.getElementById(loadingId);
+                    if (loader) loader.remove();
                     await addMsg('assistant', `Error: ${e.message}`); 
                 } finally { 
                     isGenerating = false; 
                     btn.disabled = false; 
                 }
             } else if (currentView === 'create') {
-                handleGenerate(text); input.value = '';
+                handleGenerate(text);
             }
         };
 
