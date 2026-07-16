@@ -305,8 +305,8 @@
         let currentView = 'chat';
         let conversations = [];
         let unsubscribeChats = null;
-        let isGenerating = false;
 
+        // 1. AUTH & LISTENER
         signInAnonymously(auth).catch((error) => console.error("Auth Error:", error));
 
         onAuthStateChanged(auth, (user) => {
@@ -323,35 +323,54 @@
             if (unsubscribeChats) unsubscribeChats();
             
             unsubscribeChats = onSnapshot(q, (snapshot) => {
-                conversations = [];
-                snapshot.forEach((docSnapshot) => {
-                    conversations.push({ id: docSnapshot.id, ...docSnapshot.data() });
-                });
+                const dbChats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
+                // MERGE STRATEGY: Keep local chats that haven't reached the DB yet
+                const localPending = conversations.filter(c => !dbChats.find(db => db.id === c.id));
+                conversations = [...dbChats, ...localPending];
+                
+                conversations.sort((a, b) => {
+                    const timeA = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : (a.updatedAt || 0);
+                    const timeB = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : (b.updatedAt || 0);
+                    return timeB - timeA;
+                });
+
                 renderChatList();
                 
-                const currentConv = conversations.find(c => c.id === currentConvId);
-                if (currentConv) {
-                    renderMessages(currentConv);
-                } else if (conversations.length > 0 && !currentConvId) {
+                if (currentConvId) {
+                    const activeConv = conversations.find(c => c.id === currentConvId);
+                    if (activeConv) renderMessages(activeConv);
+                } else if (conversations.length > 0) {
                     currentConvId = conversations[0].id;
+                    renderChatList();
                     renderMessages(conversations[0]);
-                } else if (conversations.length === 0) {
-                    window.newChat();
                 }
+            }, (error) => {
+                console.error("Firestore listen error:", error);
             });
         }
 
+        // 2. ACTIONS (Optimistic UI)
         window.newChat = async function() {
-            if (!currentUserId) return;
             const newId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-            await setDoc(doc(db, `users/${currentUserId}/chats`, newId), { 
-                title: 'New Chat', 
-                messages: [], 
-                createdAt: serverTimestamp(),
-                updatedAt: serverTimestamp()
-            });
             currentConvId = newId;
+
+            const newConv = { id: newId, title: 'New Chat', messages: [], updatedAt: Date.now() };
+            conversations.unshift(newConv);
+            
+            renderChatList();
+            renderMessages(newConv);
+
+            if (currentUserId) {
+                try {
+                    await setDoc(doc(db, `users/${currentUserId}/chats`, newId), { 
+                        title: 'New Chat', 
+                        messages: [], 
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    });
+                } catch (e) { console.error("Failed to create chat:", e); }
+            }
         };
 
         window.loadChat = function(id) {
@@ -361,39 +380,64 @@
             if (conv) renderMessages(conv);
         };
 
-        window.clearChat = async function() {
-            if (!currentConvId || !currentUserId) return;
-            await setDoc(doc(db, `users/${currentUserId}/chats`, currentConvId), {
-                messages: [],
-                updatedAt: serverTimestamp()
-            }, { merge: true });
+        window.addMsg = async function(role, content) {
+            if (!currentConvId) return;
+
+            let conv = conversations.find(c => c.id === currentConvId);
+            if (!conv) {
+                conv = { id: currentConvId, title: 'New Chat', messages: [], updatedAt: Date.now() };
+                conversations.unshift(conv);
+            }
+
+            // 1. UPDATE LOCAL STATE INSTANTLY
+            conv.messages.push({ role, content, timestamp: Date.now() });
+            if (conv.title === 'New Chat' && role === 'user') {
+                conv.title = content.substring(0, 30) + (content.length > 30 ? '...' : '');
+            }
+            conv.updatedAt = Date.now();
+
+            // 2. RENDER INSTANTLY
+            renderMessages(conv);
+            renderChatList();
+
+            // 3. SAVE TO FIREBASE IN BACKGROUND
+            if (currentUserId) {
+                try {
+                    await setDoc(doc(db, `users/${currentUserId}/chats`, currentConvId), {
+                        messages: conv.messages,
+                        title: conv.title,
+                        updatedAt: serverTimestamp()
+                    }, { merge: true });
+                } catch (e) { 
+                    console.error("Failed to sync message:", e); 
+                }
+            }
         };
 
         window.deleteChat = async function(id, event) {
             if(event) event.stopPropagation();
             if (!confirm('Delete this chat?')) return;
-            await deleteDoc(doc(db, `users/${currentUserId}/chats`, id));
-            if (currentConvId === id) currentConvId = null;
-        };
 
-        window.addMsg = async function(role, content) {
-            if (!currentConvId || !currentUserId) return;
-            const conv = conversations.find(c => c.id === currentConvId);
-            if (!conv) return;
-
-            const newMessages = [...(conv.messages || []), { role, content, timestamp: Date.now() }];
-            let newTitle = conv.title || 'New Chat';
-            if (newTitle === 'New Chat' && role === 'user') {
-                newTitle = content.substring(0, 30) + (content.length > 30 ? '...' : '');
+            conversations = conversations.filter(c => c.id !== id);
+            if (currentConvId === id) {
+                currentConvId = conversations.length > 0 ? conversations[0].id : null;
+            }
+            renderChatList();
+            if (currentConvId) {
+                renderMessages(conversations.find(c => c.id === currentConvId));
+            } else {
+                document.getElementById('chat-messages').innerHTML = `<div style="text-align: center; margin-top: 20vh; color: var(--text-muted);">
+                    <h1 style="font-size: 24px; font-weight: 600; color: var(--text-main); margin-bottom: 8px;">No chats yet.</h1>
+                </div>`;
             }
 
-            await setDoc(doc(db, `users/${currentUserId}/chats`, currentConvId), {
-                messages: newMessages,
-                title: newTitle,
-                updatedAt: serverTimestamp()
-            }, { merge: true });
+            if (currentUserId) {
+                try { await deleteDoc(doc(db, `users/${currentUserId}/chats`, id)); } 
+                catch (e) { console.error("Failed to delete:", e); }
+            }
         };
 
+        // 3. RENDERING
         function renderChatList() {
             const list = document.getElementById('chat-list');
             if (!list) return;
@@ -426,6 +470,7 @@
             container.scrollTop = container.scrollHeight;
         }
 
+        // 4. UI CONTROLS
         window.switchView = function(view, el) {
             currentView = view;
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -451,19 +496,17 @@
         };
 
         window.handleSend = async function() {
-            if (isGenerating) return;
-            
             const input = document.getElementById('main-input');
             const text = input.value.trim();
             if (!text) return;
             
             if (currentView === 'chat') {
                 if (!currentConvId) await window.newChat();
-                await window.addMsg('user', text);
+                window.addMsg('user', text);
+                input.value = '';
                 
                 const btn = document.getElementById('send-btn');
                 btn.disabled = true;
-                input.value = '';
                 
                 const conv = conversations.find(c => c.id === currentConvId);
                 const messagesForApi = conv ? conv.messages.map(m => ({role: m.role, content: m.content})) : [{role: 'user', content: text}];
@@ -483,10 +526,10 @@
                     const res = await fetch(`${API.chat}/generate_chat`, { method: 'POST', body: formData });
                     const data = await res.json();
                     loading.remove();
-                    await window.addMsg('assistant', data.result_text || 'No response.');
+                    window.addMsg('assistant', data.result_text || 'No response.');
                 } catch (e) {
                     loading.remove();
-                    await window.addMsg('assistant', `Error: ${e.message}`);
+                    window.addMsg('assistant', `Error: ${e.message}`);
                 } finally { 
                     btn.disabled = false; 
                 }
@@ -509,168 +552,56 @@
         };
 
         window.generateImage = async function(prompt) {
-            if (isGenerating) {
-                alert('Already generating. Please wait...');
-                return;
-            }
-            
-            isGenerating = true;
             const btn = document.getElementById('send-btn');
             const resBox = document.getElementById('img-result');
-            
-            const steps = parseInt(document.getElementById('img-steps').value) || 8;
-            const numImages = parseInt(document.getElementById('img-num').value) || 1;
-            
-            // Show loading overlay
-            resBox.innerHTML = `
-                <div class="loading-overlay">
-                    <div class="spinner" style="width: 32px; height: 32px;"></div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                    <div class="loading-text">Generating ${numImages} image(s)... This may take 1-5 minutes.</div>
-                    <div style="font-size: 11px; color: var(--text-muted);">Steps: ${steps} • Resolution: ${document.getElementById('img-res').value}px</div>
-                </div>
-            `;
-            
             btn.disabled = true;
+            resBox.innerHTML = '<div class="spinner"></div>';
 
             const formData = new FormData();
             formData.append('prompt', prompt);
-            formData.append('negative_prompt', document.getElementById('img-neg').value || '');
-            formData.append('style_preset', 'None');
-            formData.append('enhance_prompt', document.getElementById('img-enhance').value);
-            formData.append('aspect_ratio', document.getElementById('img-ar').value);
             formData.append('resolution', document.getElementById('img-res').value);
-            formData.append('steps', steps.toString());
-            formData.append('num_images', numImages.toString());
-            formData.append('seed', parseInt(document.getElementById('img-seed').value) || -1);
-            formData.append('lora_name', 'None');
+            formData.append('aspect_ratio', document.getElementById('img-ar').value);
+            formData.append('steps', document.getElementById('img-steps').value);
+            formData.append('num_images', document.getElementById('img-num').value);
+            formData.append('seed', document.getElementById('img-seed').value);
+            formData.append('negative_prompt', document.getElementById('img-neg').value);
+            formData.append('enhance_prompt', document.getElementById('img-enhance').value);
 
             try {
-                // Simulate progress
-                let progress = 0;
-                const progressInterval = setInterval(() => {
-                    progress += Math.random() * 15;
-                    if (progress > 90) progress = 90;
-                    const progressBar = resBox.querySelector('.progress-fill');
-                    if (progressBar) progressBar.style.width = progress + '%';
-                }, 2000);
-
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minute timeout
-
-                const res = await fetch(`${API.image}/generate`, { 
-                    method: 'POST', 
-                    body: formData,
-                    signal: controller.signal
-                });
-                
-                clearTimeout(timeoutId);
-                clearInterval(progressInterval);
-                
+                const res = await fetch(`${API.image}/generate`, { method: 'POST', body: formData });
                 const data = await res.json();
-                
-                if (data.error) throw new Error(data.error);
-                
                 if (data.result_url) {
-                    resBox.innerHTML = `<img src="${API.image}${data.result_url}" style="max-width:100%; border-radius:8px; box-shadow: 0 4px 20px rgba(0,0,0,0.4);">`;
-                } else if (data.result_urls && data.result_urls.length > 0) {
-                    resBox.innerHTML = `<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:16px; width:100%;">${data.result_urls.map(url => `<img src="${API.image}${url}" style="width:100%; border-radius:8px; cursor: pointer;" onclick="window.open(this.src)">`).join('')}</div>`;
-                } else {
-                    throw new Error('No images generated');
-                }
-            } catch (e) { 
-                if (e.name === 'AbortError') {
-                    resBox.innerHTML = `<div style="color: var(--accent); text-align: center;">Generation timed out. Please try again with lower settings.</div>`;
-                } else {
-                    resBox.innerHTML = `<div style="color: var(--accent); text-align: center;">Error: ${e.message}</div>`;
-                }
-            } finally { 
-                btn.disabled = false;
-                isGenerating = false;
-            }
+                    resBox.innerHTML = `<img src="${API.image}${data.result_url}" style="max-width:100%; border-radius:8px;">`;
+                } else if (data.result_urls) {
+                    resBox.innerHTML = `<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:16px;">${data.result_urls.map(url => `<img src="${API.image}${url}" style="width:100%; border-radius:8px;">`).join('')}</div>`;
+                } else { resBox.innerHTML = 'Failed to generate.'; }
+            } catch (e) { resBox.innerHTML = `Error: ${e.message}`; }
+            finally { btn.disabled = false; }
         };
 
         window.generateVideo = async function(prompt) {
-            if (isGenerating) {
-                alert('Already generating. Please wait...');
-                return;
-            }
-            
-            isGenerating = true;
             const btn = document.getElementById('send-btn');
             const resBox = document.getElementById('vid-result');
-            
-            const duration = parseInt(document.getElementById('vid-dur').value) || 121;
-            const steps = parseInt(document.getElementById('vid-steps').value) || 8;
-            const durationSec = Math.round(duration / 24.2); // Approximate fps
-            
-            // Show loading overlay
-            resBox.innerHTML = `
-                <div class="loading-overlay">
-                    <div class="spinner" style="width: 32px; height: 32px;"></div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                    <div class="loading-text">Generating ${durationSec}s video... This may take 3-10 minutes.</div>
-                    <div style="font-size: 11px; color: var(--text-muted);">Steps: ${steps} • Resolution: ${document.getElementById('vid-res').value} • Frames: ${duration}</div>
-                </div>
-            `;
-            
             btn.disabled = true;
+            resBox.innerHTML = '<div class="spinner"></div>';
 
             const formData = new FormData();
             formData.append('prompt', prompt);
-            formData.append('duration', duration.toString());
+            formData.append('duration', document.getElementById('vid-dur').value);
             formData.append('resolution', document.getElementById('vid-res').value);
             formData.append('aspect_ratio', document.getElementById('vid-ar').value);
             formData.append('guide_scale', document.getElementById('vid-guide').value);
-            formData.append('steps', steps.toString());
-            formData.append('seed', parseInt(document.getElementById('vid-seed').value) || -1);
-            formData.append('lora_name', 'None');
+            formData.append('steps', document.getElementById('vid-steps').value);
+            formData.append('seed', document.getElementById('vid-seed').value);
 
             try {
-                // Simulate progress
-                let progress = 0;
-                const progressInterval = setInterval(() => {
-                    progress += Math.random() * 8;
-                    if (progress > 90) progress = 90;
-                    const progressBar = resBox.querySelector('.progress-fill');
-                    if (progressBar) progressBar.style.width = progress + '%';
-                }, 3000);
-
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 600000); // 10 minute timeout
-
-                const res = await fetch(`${API.video}/generate`, { 
-                    method: 'POST', 
-                    body: formData,
-                    signal: controller.signal
-                });
-                
-                clearTimeout(timeoutId);
-                clearInterval(progressInterval);
-                
+                const res = await fetch(`${API.video}/generate`, { method: 'POST', body: formData });
                 const data = await res.json();
-                
-                if (data.error) throw new Error(data.error);
-                
                 if (data.result_url) {
-                    resBox.innerHTML = `<video controls autoplay loop src="${API.video}${data.result_url}" style="max-width:100%; border-radius:8px; box-shadow: 0 4px 20px rgba(0,0,0,0.4);"></video>`;
-                } else {
-                    throw new Error('No video generated');
-                }
-            } catch (e) { 
-                if (e.name === 'AbortError') {
-                    resBox.innerHTML = `<div style="color: var(--accent); text-align: center;">Generation timed out. Video generation can take several minutes. Please try again.</div>`;
-                } else {
-                    resBox.innerHTML = `<div style="color: var(--accent); text-align: center;">Error: ${e.message}</div>`;
-                }
-            } finally { 
-                btn.disabled = false;
-                isGenerating = false;
-            }
+                    resBox.innerHTML = `<video controls src="${API.video}${data.result_url}" style="max-width:100%; border-radius:8px;"></video>`;
+                } else { resBox.innerHTML = 'Failed to generate.'; }
+            } catch (e) { resBox.innerHTML = `Error: ${e.message}`; }
+            finally { btn.disabled = false; }
         };
     </script>
 </body>
