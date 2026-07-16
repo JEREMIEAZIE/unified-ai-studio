@@ -4,62 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SAINT SILK — AI Studio</title>
-    
-    <!-- Favicon Fix -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧵</text></svg>">
-    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-app: #09090b;
-            --bg-sidebar: #0f0f12;
-            --bg-panel: #16161a;
-            --bg-input: #1e1e24;
-            --bg-hover: #25252d;
-            --border: #2a2a33;
-            --border-light: #3a3a45;
-            --text-main: #fafafa;
-            --text-muted: #8a8a95;
-            --text-dim: #5a5a65;
-            --accent: #a855f7;
-            --accent-hover: #9333ea;
-            --accent-soft: rgba(168, 85, 247, 0.15);
-            --success: #10b981;
-            --danger: #ef4444;
-            --radius: 10px;
-            --radius-sm: 6px;
-            --font-sans: 'Inter', -apple-system, sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
-            --shadow: 0 4px 20px rgba(0,0,0,0.4);
-            --header-height: 60px;
-            --input-height: 70px;
+            --bg-app: #09090b; --bg-sidebar: #0f0f12; --bg-panel: #16161a; --bg-input: #1e1e24;
+            --bg-hover: #25252d; --border: #2a2a33; --border-light: #3a3a45; --text-main: #fafafa;
+            --text-muted: #8a8a95; --text-dim: #5a5a65; --accent: #a855f7; --accent-hover: #9333ea;
+            --accent-soft: rgba(168, 85, 247, 0.15); --success: #10b981; --danger: #ef4444;
+            --radius: 10px; --radius-sm: 6px; --font-sans: 'Inter', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace; --shadow: 0 4px 20px rgba(0,0,0,0.4);
+            --header-height: 60px; --input-height: 70px;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body { height: 100%; overflow: hidden; }
         body { font-family: var(--font-sans); background: var(--bg-app); color: var(--text-main); display: flex; font-size: 14px; }
 
-        /* SIDEBAR */
-        .sidebar {
-            width: 240px; background: var(--bg-sidebar); border-right: 1px solid var(--border);
-            display: flex; flex-direction: column; padding: 16px 12px; flex-shrink: 0; z-index: 100;
-        }
+        .sidebar { width: 240px; background: var(--bg-sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 16px 12px; flex-shrink: 0; z-index: 100; }
         .brand { display: flex; align-items: center; gap: 10px; padding: 8px 10px 16px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
         .brand img { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; }
         .brand-name { font-weight: 800; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; }
-
         .nav-section { margin-bottom: 20px; }
         .nav-label { font-size: 10px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; padding: 0 10px 8px; }
-        .nav-item {
-            display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: var(--radius-sm);
-            cursor: pointer; color: var(--text-muted); font-size: 13px; font-weight: 500; transition: all 0.15s ease; margin-bottom: 2px; position: relative;
-        }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: var(--radius-sm); cursor: pointer; color: var(--text-muted); font-size: 13px; font-weight: 500; transition: all 0.15s ease; margin-bottom: 2px; position: relative; }
         .nav-item:active { background: var(--bg-hover); }
         .nav-item.active { background: var(--accent-soft); color: var(--accent); }
         .nav-item.active::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 16px; background: var(--accent); border-radius: 0 3px 3px 0; }
         .nav-item svg { width: 18px; height: 18px; stroke-width: 2; flex-shrink: 0; }
         .nav-item .badge { margin-left: auto; font-size: 10px; padding: 2px 6px; background: var(--bg-hover); border-radius: 10px; color: var(--text-muted); }
-
         .chat-list { flex: 1; overflow-y: auto; padding: 0 4px; }
         .chat-item { padding: 8px 10px; border-radius: var(--radius-sm); cursor: pointer; font-size: 12px; color: var(--text-muted); margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center; transition: background 0.15s; }
         .chat-item:active { background: var(--bg-hover); }
@@ -67,7 +39,6 @@
         .chat-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
         .chat-item button { background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 4px; font-size: 16px; }
         .chat-item button:active { color: var(--danger); }
-
         .sidebar-footer { padding-top: 12px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
         .btn { padding: 10px 12px; border-radius: var(--radius-sm); border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-family: var(--font-sans); touch-action: manipulation; }
         .btn-primary { background: var(--accent); color: white; }
@@ -75,53 +46,38 @@
         .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
         .btn-ghost:active { background: var(--bg-hover); color: var(--text-main); }
 
-        /* MOBILE HEADER */
-        .mobile-header {
-            display: none; position: fixed; top: 0; left: 0; right: 0; height: var(--header-height);
-            background: var(--bg-sidebar); border-bottom: 1px solid var(--border); z-index: 90;
-            padding: 0 16px; align-items: center; justify-content: space-between;
-        }
+        .mobile-header { display: none; position: fixed; top: 0; left: 0; right: 0; height: var(--header-height); background: var(--bg-sidebar); border-bottom: 1px solid var(--border); z-index: 90; padding: 0 16px; align-items: center; justify-content: space-between; }
         .menu-toggle { background: none; border: none; color: var(--text-main); font-size: 24px; cursor: pointer; padding: 8px; touch-action: manipulation; }
         .mobile-logo { font-weight: 800; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; }
 
-        /* MAIN AREA */
         .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; padding-top: 0; }
-        .topbar {
-            padding: 14px 24px; background: var(--bg-sidebar); border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
-        }
+        .topbar { padding: 14px 24px; background: var(--bg-sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
         .topbar-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
         .topbar-title .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success); }
         .content { flex: 1; overflow-y: auto; position: relative; padding-bottom: var(--input-height); }
         .view { display: none; height: 100%; min-height: 100%; }
         .view.active { display: flex; flex-direction: column; }
 
-        /* CREATE VIEW */
         .create-layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; padding: 20px; max-width: 1400px; margin: 0 auto; width: 100%; height: 100%; overflow: hidden; }
         .create-main { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
-
         .mode-tabs { display: flex; gap: 4px; background: var(--bg-panel); padding: 4px; border-radius: var(--radius); border: 1px solid var(--border); width: fit-content; }
         .mode-tab { padding: 8px 16px; border-radius: var(--radius-sm); border: none; background: transparent; color: var(--text-muted); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: var(--font-sans); display: flex; align-items: center; gap: 6px; touch-action: manipulation; }
         .mode-tab:active { background: var(--bg-hover); color: var(--text-main); }
         .mode-tab.active { background: var(--accent); color: white; }
-
         .style-chips { display: flex; gap: 8px; flex-wrap: wrap; }
         .chip { padding: 6px 12px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; color: var(--text-muted); cursor: pointer; transition: all 0.15s; touch-action: manipulation; }
         .chip:active { background: var(--bg-hover); color: var(--text-main); border-color: var(--border-light); }
         .chip.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
-
         .result-stage { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius); flex: 1; min-height: 300px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
         .result-stage img, .result-stage video { max-width: 100%; max-height: 100%; border-radius: var(--radius-sm); }
         .result-placeholder { text-align: center; color: var(--text-dim); padding: 40px; }
         .result-placeholder svg { width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.3; }
         .result-placeholder h3 { font-size: 16px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
-
         .loading-overlay { position: absolute; inset: 0; background: rgba(9,9,11,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 5; }
         .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .progress-bar { width: 200px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; }
-
         .settings-panel { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; overflow-y: auto; display: flex; flex-direction: column; max-height: 60vh; }
         .settings-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
         .setting-group { margin-bottom: 14px; }
@@ -133,7 +89,6 @@
         .generate-btn:active { background: var(--accent-hover); }
         .generate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* GALLERY VIEW */
         .gallery-header { padding: 20px 24px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
         .gallery-header h2 { font-size: 18px; font-weight: 700; }
         .gallery-filters { display: flex; gap: 8px; }
@@ -150,7 +105,6 @@
         .gallery-item .meta strong { display: block; font-size: 12px; margin-bottom: 4px; }
         .gallery-empty { grid-column: 1/-1; text-align: center; padding: 80px 20px; color: var(--text-dim); }
 
-        /* CHAT VIEW */
         .chat-layout { max-width: 800px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; height: 100%; }
         .chat-messages { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
         .msg { display: flex; gap: 12px; animation: fadeIn 0.3s ease; }
@@ -167,63 +121,30 @@
         .suggestion { padding: 12px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; color: var(--text-muted); cursor: pointer; transition: all 0.15s; text-align: left; touch-action: manipulation; }
         .suggestion:active { border-color: var(--accent); color: var(--text-main); }
 
-        /* INPUT BAR */
-        .input-bar {
-            position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 24px;
-            background: var(--bg-sidebar); border-top: 1px solid var(--border);
-            z-index: 50;
-        }
+        .input-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 24px; background: var(--bg-sidebar); border-top: 1px solid var(--border); z-index: 50; }
         .input-wrapper { max-width: 800px; margin: 0 auto; position: relative; }
-        .input-box {
-            width: 100%; padding: 14px 52px 14px 16px; background: var(--bg-input);
-            border: 1px solid var(--border); border-radius: var(--radius);
-            color: var(--text-main); font-size: 14px; font-family: var(--font-sans);
-            resize: none; outline: none; min-height: 52px; max-height: 160px;
-            transition: border-color 0.15s;
-        }
+        .input-box { width: 100%; padding: 14px 52px 14px 16px; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-main); font-size: 14px; font-family: var(--font-sans); resize: none; outline: none; min-height: 52px; max-height: 160px; transition: border-color 0.15s; }
         .input-box:focus { border-color: var(--accent); }
-        .send-btn {
-            position: absolute; right: 8px; bottom: 8px; width: 36px; height: 36px;
-            background: var(--accent); border: none; border-radius: var(--radius-sm);
-            color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: all 0.15s; touch-action: manipulation;
-        }
+        .send-btn { position: absolute; right: 8px; bottom: 8px; width: 36px; height: 36px; background: var(--accent); border: none; border-radius: var(--radius-sm); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; touch-action: manipulation; }
         .send-btn:active { background: var(--accent-hover); transform: scale(0.95); }
         .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
         .input-hint { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 8px; }
 
-        /* TOAST & OVERLAY */
-        .toast {
-            position: fixed; top: 80px; right: 20px; padding: 12px 16px;
-            background: var(--bg-panel); border: 1px solid var(--border);
-            border-radius: var(--radius-sm); color: var(--text-main);
-            font-size: 13px; z-index: 200; animation: slideIn 0.3s ease;
-            box-shadow: var(--shadow); max-width: calc(100% - 40px);
-        }
+        .toast { position: fixed; top: 80px; right: 20px; padding: 12px 16px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-main); font-size: 13px; z-index: 200; animation: slideIn 0.3s ease; box-shadow: var(--shadow); max-width: calc(100% - 40px); }
         .toast.success { border-color: var(--success); }
         .toast.error { border-color: var(--danger); }
         @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 95; backdrop-filter: blur(2px); }
 
-        .sidebar-overlay {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-            z-index: 95; backdrop-filter: blur(2px);
-        }
-
-        /* RESPONSIVE */
         @media (max-width: 1024px) {
             .create-layout { grid-template-columns: 1fr; overflow-y: auto; padding: 16px; }
             .settings-panel { order: -1; max-height: none; }
             .mode-tabs { width: 100%; }
             .mode-tab { flex: 1; justify-content: center; }
         }
-
         @media (max-width: 768px) {
             .mobile-header { display: flex; }
-            .sidebar {
-                position: fixed; height: 100%; left: 0; top: 0;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
+            .sidebar { position: fixed; height: 100%; left: 0; top: 0; transform: translateX(-100%); transition: transform 0.3s ease; }
             .sidebar.open { transform: translateX(0); }
             .sidebar-overlay.active { display: block; }
             .main { padding-top: var(--header-height); }
@@ -247,7 +168,6 @@
             .progress-bar { width: 150px; }
             .input-box { font-size: 16px; } 
         }
-
         @media (max-width: 480px) {
             :root { --header-height: 56px; --input-height: 64px; }
             body { font-size: 13px; }
@@ -261,14 +181,12 @@
             .send-btn { width: 32px; height: 32px; right: 6px; bottom: 8px; }
             .toast { top: 70px; right: 12px; left: 12px; max-width: none; }
         }
-
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     </style>
 </head>
 <body>
-
     <div class="mobile-header">
         <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
         <div class="mobile-logo">Saint Silk</div>
@@ -284,16 +202,13 @@
         <div class="nav-section">
             <div class="nav-label">Workspace</div>
             <div class="nav-item active" data-view="create" onclick="switchView('create', this)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                Create
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Create
             </div>
             <div class="nav-item" data-view="gallery" onclick="switchView('gallery', this)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                Gallery <span class="badge" id="gallery-count">0</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Gallery <span class="badge" id="gallery-count">0</span>
             </div>
             <div class="nav-item" data-view="chat" onclick="switchView('chat', this)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                Chat
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Chat
             </div>
         </div>
         <div class="nav-section" style="flex:1; display:flex; flex-direction:column;">
@@ -302,8 +217,7 @@
         </div>
         <div class="sidebar-footer">
             <button class="btn btn-primary" onclick="newChat()">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                New Chat
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> New Chat
             </button>
         </div>
     </aside>
@@ -330,7 +244,6 @@
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg> Video
                             </button>
                         </div>
-
                         <div class="style-chips">
                             <span style="font-size:11px; color:var(--text-dim); margin-right:4px; align-self:center;">Styles:</span>
                             <span class="chip" onclick="applyStyle(this, 'cinematic')">Cinematic</span>
@@ -340,7 +253,6 @@
                             <span class="chip" onclick="applyStyle(this, 'fantasy')">Fantasy</span>
                             <span class="chip" onclick="applyStyle(this, '3d')">3D Render</span>
                         </div>
-
                         <div class="result-stage" id="result-stage">
                             <div class="result-placeholder">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -349,23 +261,21 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="settings-panel">
-                        <div class="settings-title"><span>Settings</span><span style="font-size:10px; color:var(--text-dim);">Krea-2 / LTX-2.3</span></div>
+                        <div class="settings-title"><span>Settings</span><span style="font-size:10px; color:var(--text-dim);">SDXL / LTX-2.3</span></div>
                         <div id="img-settings">
-                            <div class="setting-group"><label class="setting-label">Resolution</label><select class="setting-select" id="img-res"><option value="1024">1024px</option><option value="1536">1536px</option><option value="2048">2048px</option></select></div>
+                            <div class="setting-group"><label class="setting-label">Resolution</label><select class="setting-select" id="img-res"><option value="1024">1024px</option><option value="768">768px (Faster)</option></select></div>
                             <div class="setting-group"><label class="setting-label">Aspect Ratio</label><select class="setting-select" id="img-ar"><option value="1:1">1:1 Square</option><option value="16:9">16:9 Landscape</option><option value="9:16">9:16 Portrait</option><option value="4:3">4:3 Standard</option></select></div>
                             <div class="setting-row">
-                                <div class="setting-group"><label class="setting-label">Steps</label><input type="number" class="setting-input" id="img-steps" value="8" min="1" max="50"></div>
+                                <div class="setting-group"><label class="setting-label">Steps</label><input type="number" class="setting-input" id="img-steps" value="4" min="1" max="50"></div>
                                 <div class="setting-group"><label class="setting-label">Images</label><input type="number" class="setting-input" id="img-num" value="1" min="1" max="4"></div>
                             </div>
                             <div class="setting-group"><label class="setting-label">Seed (-1 = random)</label><input type="number" class="setting-input" id="img-seed" value="-1"></div>
-                            <div class="setting-group"><label class="setting-label">Negative Prompt</label><input type="text" class="setting-input" id="img-neg" placeholder="What to avoid..."></div>
-                            <div class="setting-group"><label class="setting-label"><input type="checkbox" id="img-enhance" checked style="margin-right:6px;"> Auto-enhance prompt</label></div>
+                            <div class="setting-group"><label class="setting-label">Negative Prompt</label><input type="text" class="setting-input" id="img-neg" placeholder="ugly, blurry, distorted"></div>
                         </div>
                         <div id="vid-settings" style="display:none;">
                             <div class="setting-group"><label class="setting-label">Duration</label><select class="setting-select" id="vid-dur"><option value="49">2s</option><option value="73">3s</option><option value="121" selected>5s</option><option value="193">8s</option></select></div>
-                            <div class="setting-group"><label class="setting-label">Resolution</label><select class="setting-select" id="vid-res"><option value="1080p">1080p</option><option value="720p" selected>720p</option><option value="540p">540p</option></select></div>
+                            <div class="setting-group"><label class="setting-label">Resolution</label><select class="setting-select" id="vid-res"><option value="720p" selected>720p</option><option value="540p">540p</option><option value="480p">480p</option></select></div>
                             <div class="setting-group"><label class="setting-label">Aspect Ratio</label><select class="setting-select" id="vid-ar"><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="1:1">1:1</option></select></div>
                             <div class="setting-row">
                                 <div class="setting-group"><label class="setting-label">Steps</label><input type="number" class="setting-input" id="vid-steps" value="8" min="2" max="50"></div>
@@ -377,7 +287,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="view-gallery" class="view">
                 <div class="gallery-header">
                     <h2>Your Gallery</h2>
@@ -391,13 +300,12 @@
                     <div class="gallery-empty"><h3 style="font-size:18px; margin-bottom:8px; color:var(--text-muted);">No creations yet</h3><p>Generate your first image or video</p></div>
                 </div>
             </div>
-
             <div id="view-chat" class="view">
                 <div class="chat-layout">
                     <div class="chat-messages" id="chat-messages">
                         <div class="chat-welcome">
                             <h1>How can I help?</h1>
-                            <p>Powered by Qwen 2.5 with live web access</p>
+                            <p>Powered by Dolphin 2.9 (Uncensored) with live web access</p>
                             <div class="suggestion-grid">
                                 <div class="suggestion" onclick="useSuggestion(this)">Explain quantum computing simply</div>
                                 <div class="suggestion" onclick="useSuggestion(this)">Write a cyberpunk story opening</div>
@@ -422,12 +330,10 @@
     </main>
 
     <script type="module">
-        // Using stable 10.8.1 to prevent version conflicts
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, deleteDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // 🌟 YOUR NEW FIREBASE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyBY9mSpUeat1zu70i4JpcB-7fYxZj5YfCk",
             authDomain: "slk-1-58b0d.firebaseapp.com",
@@ -552,8 +458,6 @@
                     formData.append('num_images', document.getElementById('img-num').value);
                     formData.append('seed', document.getElementById('img-seed').value); 
                     formData.append('negative_prompt', document.getElementById('img-neg').value);
-                    formData.append('enhance_prompt', document.getElementById('img-enhance').checked ? 'true' : 'false'); 
-                    formData.append('style_preset', 'None'); formData.append('lora_name', 'None');
                 } else {
                     formData.append('duration', document.getElementById('vid-dur').value); 
                     formData.append('resolution', document.getElementById('vid-res').value);
@@ -561,7 +465,6 @@
                     formData.append('steps', document.getElementById('vid-steps').value);
                     formData.append('guide_scale', document.getElementById('vid-guide').value); 
                     formData.append('seed', document.getElementById('vid-seed').value); 
-                    formData.append('lora_name', 'None');
                 }
                 
                 const endpoint = createMode === 'image' ? API.image : API.video;
@@ -659,7 +562,7 @@
             const container = document.getElementById('chat-messages'); 
             if (!container) return; 
             if (!conv || !conv.messages || conv.messages.length === 0) { 
-                container.innerHTML = `<div class="chat-welcome"><h1>How can I help?</h1><p>Powered by Qwen 2.5 with live web access</p><div class="suggestion-grid"><div class="suggestion" onclick="useSuggestion(this)">Explain quantum computing simply</div><div class="suggestion" onclick="useSuggestion(this)">Write a cyberpunk story opening</div><div class="suggestion" onclick="useSuggestion(this)">What's trending in AI today?</div><div class="suggestion" onclick="useSuggestion(this)">Help me debug Python code</div></div></div>`; 
+                container.innerHTML = `<div class="chat-welcome"><h1>How can I help?</h1><p>Powered by Dolphin 2.9 (Uncensored) with live web access</p><div class="suggestion-grid"><div class="suggestion" onclick="useSuggestion(this)">Explain quantum computing simply</div><div class="suggestion" onclick="useSuggestion(this)">Write a cyberpunk story opening</div><div class="suggestion" onclick="useSuggestion(this)">What's trending in AI today?</div><div class="suggestion" onclick="useSuggestion(this)">Help me debug Python code</div></div></div>`; 
                 return; 
             } 
             container.innerHTML = conv.messages.map(m => `<div class="msg ${m.role}"><div class="avatar">${m.role === 'user' ? 'U' : 'AI'}</div><div class="bubble">${m.content.replace(/\n/g, '<br>').replace(/```([\s\S]*?)```/g, '<pre>$1</pre>')}</div></div>`).join(''); 
