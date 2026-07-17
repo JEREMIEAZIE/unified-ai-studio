@@ -3,159 +3,661 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAINT SILK — AI Studio</title>
+    <title>SAINT SILK — AI Studio Pro</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧵</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #09090b; color: #fafafa; height: 100vh; display: flex; flex-direction: column; }
-        .header { padding: 16px 24px; background: #0f0f12; border-bottom: 1px solid #2a2a33; display: flex; align-items: center; gap: 12px; }
-        .header h1 { font-size: 18px; font-weight: 800; letter-spacing: 0.1em; }
-        .tabs { display: flex; gap: 8px; padding: 12px 24px; background: #0f0f12; border-bottom: 1px solid #2a2a33; }
-        .tab { padding: 8px 16px; background: #16161a; border: 1px solid #2a2a33; border-radius: 6px; color: #8a8a95; cursor: pointer; font-size: 13px; font-weight: 600; }
+        .header { padding: 16px 24px; background: #0f0f12; border-bottom: 1px solid #2a2a33; display: flex; align-items: center; justify-content: space-between; }
+        .header h1 { font-size: 18px; font-weight: 800; letter-spacing: 0.1em; background: linear-gradient(135deg, #a855f7, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .tabs { display: flex; gap: 8px; padding: 12px 24px; background: #0f0f12; border-bottom: 1px solid #2a2a33; overflow-x: auto; }
+        .tab { padding: 8px 16px; background: #16161a; border: 1px solid #2a2a33; border-radius: 6px; color: #8a8a95; cursor: pointer; font-size: 13px; font-weight: 600; white-space: nowrap; transition: 0.15s; }
         .tab.active { background: #a855f7; color: white; border-color: #a855f7; }
+        .sub-tabs { display: flex; gap: 6px; padding: 8px 24px; background: #0f0f12; border-bottom: 1px solid #2a2a33; overflow-x: auto; }
+        .sub-tab { padding: 6px 12px; background: transparent; border: 1px solid #2a2a33; border-radius: 20px; color: #8a8a95; cursor: pointer; font-size: 12px; font-weight: 500; white-space: nowrap; }
+        .sub-tab.active { background: #25252d; color: #fafafa; border-color: #a855f7; }
         .content { flex: 1; overflow-y: auto; padding: 24px; }
         .view { display: none; }
         .view.active { display: block; }
-        .input-bar { padding: 16px 24px; background: #0f0f12; border-top: 1px solid #2a2a33; }
-        .input-wrapper { max-width: 800px; margin: 0 auto; position: relative; }
-        textarea { width: 100%; padding: 12px 52px 12px 16px; background: #1e1e24; border: 1px solid #2a2a33; border-radius: 8px; color: #fafafa; font-size: 14px; font-family: inherit; resize: none; min-height: 52px; }
+        .create-grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; max-width: 1400px; margin: 0 auto; }
+        .result-stage { background: #16161a; border: 1px solid #2a2a33; border-radius: 12px; min-height: 400px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .result-stage img, .result-stage video { max-width: 100%; max-height: 600px; border-radius: 8px; }
+        .settings { background: #16161a; border: 1px solid #2a2a33; border-radius: 12px; padding: 16px; max-height: 70vh; overflow-y: auto; }
+        .settings h3 { font-size: 12px; font-weight: 700; color: #8a8a95; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+        .setting-group { margin-bottom: 14px; }
+        .setting-label { display: block; font-size: 12px; color: #a0a0a0; margin-bottom: 6px; font-weight: 500; }
+        .setting-input, .setting-select { width: 100%; padding: 8px 10px; background: #1e1e24; border: 1px solid #2a2a33; border-radius: 6px; color: #fafafa; font-size: 13px; font-family: inherit; }
+        .setting-input:focus, .setting-select:focus { outline: none; border-color: #a855f7; }
+        .setting-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .upload-zone { border: 2px dashed #2a2a33; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: 0.15s; margin-bottom: 12px; }
+        .upload-zone:hover { border-color: #a855f7; background: rgba(168, 85, 247, 0.05); }
+        .upload-zone.has-image { border-style: solid; padding: 8px; }
+        .upload-zone img { max-width: 100%; max-height: 200px; border-radius: 6px; }
+        .input-bar { padding: 16px 24px; background: #0f0f12; border-top: 1px solid #2a2a33; flex-shrink: 0; }
+        .input-wrapper { max-width: 900px; margin: 0 auto; position: relative; }
+        textarea { width: 100%; padding: 12px 52px 12px 16px; background: #1e1e24; border: 1px solid #2a2a33; border-radius: 8px; color: #fafafa; font-size: 14px; font-family: inherit; resize: none; min-height: 52px; max-height: 200px; }
         textarea:focus { outline: none; border-color: #a855f7; }
-        button { position: absolute; right: 8px; bottom: 8px; width: 36px; height: 36px; background: #a855f7; border: none; border-radius: 6px; color: white; cursor: pointer; }
-        button:disabled { opacity: 0.4; cursor: not-allowed; }
-        .result { max-width: 800px; margin: 0 auto; background: #16161a; border: 1px solid #2a2a33; border-radius: 8px; padding: 24px; min-height: 300px; display: flex; align-items: center; justify-content: center; }
-        .result img, .result video { max-width: 100%; max-height: 500px; border-radius: 6px; }
-        .chat-messages { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+        .send-btn { position: absolute; right: 8px; bottom: 8px; width: 36px; height: 36px; background: #a855f7; border: none; border-radius: 6px; color: white; cursor: pointer; }
+        .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .chat-messages { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
         .msg { display: flex; gap: 12px; }
         .msg.user { flex-direction: row-reverse; }
-        .bubble { padding: 12px 16px; background: #16161a; border: 1px solid #2a2a33; border-radius: 12px; max-width: 70%; }
-        .msg.user .bubble { background: #a855f7; border: none; }
-        .spinner { width: 20px; height: 20px; border: 2px solid #2a2a33; border-top-color: #a855f7; border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .bubble { padding: 12px 16px; background: #16161a; border: 1px solid #2a2a33; border-radius: 12px; max-width: 75%; font-size: 14px; line-height: 1.6; word-wrap: break-word; }
+        .msg.user .bubble { background: #a855f7; border: none; color: white; }
+        .bubble pre { background: #09090b; padding: 10px; border-radius: 6px; overflow-x: auto; margin: 8px 0; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+        .spinner { width: 32px; height: 32px; border: 3px solid #2a2a33; border-top-color: #a855f7; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }        .toast { position: fixed; top: 80px; right: 24px; padding: 14px 20px; background: #16161a; border: 1px solid #2a2a33; border-radius: 8px; font-size: 13px; z-index: 1000; }
+        .toast.success { border-color: #10b981; }
+        .toast.error { border-color: #ef4444; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+        .gallery-item { aspect-ratio: 1; background: #16161a; border: 1px solid #2a2a33; border-radius: 8px; overflow: hidden; cursor: pointer; position: relative; }
+        .gallery-item:hover { border-color: #a855f7; }
+        .gallery-item img, .gallery-item video { width: 100%; height: 100%; object-fit: cover; }
+        .gallery-item .type-badge { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+        @media (max-width: 1024px) { .create-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>SAINT SILK</h1>
+        <div style="font-size: 12px; color: #8a8a95;">Pro Edition</div>
     </div>
     
     <div class="tabs">
-        <div class="tab active" onclick="switchView('create')">Create</div>
-        <div class="tab" onclick="switchView('chat')">Chat</div>
+        <div class="tab active" onclick="switchView('image', this)">🎨 Image</div>
+        <div class="tab" onclick="switchView('video', this)">🎬 Video</div>
+        <div class="tab" onclick="switchView('chat', this)">💬 Chat</div>
+        <div class="tab" onclick="switchView('gallery', this)">📚 Gallery</div>
+    </div>
+
+    <div class="sub-tabs" id="sub-tabs">
+        <div class="sub-tab active" onclick="switchSubMode('txt2img', this)">Text → Image</div>
+        <div class="sub-tab" onclick="switchSubMode('img2img', this)">Image → Image</div>
+        <div class="sub-tab" onclick="switchSubMode('upscale', this)">Upscale 2x</div>
+        <div class="sub-tab" onclick="switchSubMode('lora', this)">LoRA Manager</div>
     </div>
 
     <div class="content">
-        <div id="view-create" class="view active">
-            <div class="result" id="result-stage">
-                <p style="color: #5a5a65;">Your creation will appear here</p>            </div>
+        <div id="view-image" class="view active">
+            <div class="create-grid">
+                <div>
+                    <div class="result-stage" id="result-stage">
+                        <p style="color: #5a5a65;">Your creation will appear here</p>
+                    </div>
+                </div>
+                <div class="settings">
+                    <h3 id="settings-title">Generation Settings</h3>
+                    
+                    <div id="img-upload-zone" class="upload-zone" style="display:none;" onclick="document.getElementById('img-upload').click()">
+                        <p style="color: #8a8a95;">📷 Click to upload image</p>
+                        <input type="file" id="img-upload" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+                    </div>
+                    <div id="img-preview-container" style="display:none; margin-bottom: 12px;">
+                        <img id="img-preview" style="max-width: 100%; border-radius: 6px;">
+                        <button onclick="clearUploadedImage()" style="margin-top: 8px; padding: 6px 12px; background: #ef4444; border: none; border-radius: 6px; color: white; cursor: pointer; font-size: 12px;">Remove</button>
+                    </div>
+                    <div id="txt2img-settings">
+                        <div class="setting-group">
+                            <label class="setting-label">Style</label>
+                            <select class="setting-select" id="img-style">
+                                <option value="default">Default</option>
+                                <option value="anime">Anime</option>
+                                <option value="realistic">Realistic</option>
+                                <option value="fantasy">Fantasy</option>
+                                <option value="cyberpunk">Cyberpunk</option>
+                                <option value="3d">3D Render</option>
+                                <option value="explicit">NSFW</option>
+                            </select>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Quality</label>
+                            <select class="setting-select" id="img-quality">
+                                <option value="high">High (score_9)</option>
+                                <option value="medium">Medium (score_8)</option>
+                                <option value="low">Fast</option>
+                            </select>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Resolution</label>
+                            <select class="setting-select" id="img-resolution">
+                                <option value="768">768px (Fast)</option>
+                                <option value="1024" selected>1024px</option>
+                                <option value="1536">1536px</option>
+                            </select>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Aspect Ratio</label>
+                            <select class="setting-select" id="img-aspect">
+                                <option value="1:1">1:1 Square</option>
+                                <option value="16:9">16:9 Landscape</option>
+                                <option value="9:16">9:16 Portrait</option>
+                                <option value="4:3">4:3 Standard</option>
+                            </select>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-group">
+                                <label class="setting-label">Steps</label>
+                                <input type="number" class="setting-input" id="img-steps" value="28" min="10" max="50">
+                            </div>
+                            <div class="setting-group">
+                                <label class="setting-label">Batch</label>
+                                <input type="number" class="setting-input" id="img-batch" value="1" min="1" max="4">
+                            </div>
+                        </div>
+                        <div class="setting-group">                            <label class="setting-label">Seed (-1 = random)</label>
+                            <input type="number" class="setting-input" id="img-seed" value="-1">
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Negative Prompt</label>
+                            <textarea class="setting-input" id="img-negative" rows="2" placeholder="lowres, bad anatomy..."></textarea>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">LoRA</label>
+                            <select class="setting-select" id="img-lora">
+                                <option value="">None</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="img2img-settings" style="display:none;">
+                        <div class="setting-group">
+                            <label class="setting-label">Strength (0.0-1.0)</label>
+                            <input type="number" class="setting-input" id="img2img-strength" value="0.75" min="0" max="1" step="0.05">
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Steps</label>
+                            <input type="number" class="setting-input" id="img2img-steps" value="28" min="10" max="50">
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Style</label>
+                            <select class="setting-select" id="img2img-style">
+                                <option value="default">Default</option>
+                                <option value="anime">Anime</option>
+                                <option value="realistic">Realistic</option>
+                                <option value="fantasy">Fantasy</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="lora-settings" style="display:none;">
+                        <div class="setting-group">
+                            <label class="setting-label">LoRA Name</label>
+                            <input type="text" class="setting-input" id="lora-name" placeholder="my_lora">
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Download URL (.safetensors)</label>
+                            <input type="text" class="setting-input" id="lora-url" placeholder="https://civitai.com/...">
+                        </div>
+                        <button onclick="registerLora()" style="width: 100%; padding: 10px; background: #a855f7; border: none; border-radius: 6px; color: white; font-weight: 600; cursor: pointer;">Register LoRA</button>
+                        <div id="lora-list" style="margin-top: 12px; font-size: 12px; color: #8a8a95;"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-        
+        <div id="view-video" class="view">
+            <div class="create-grid">
+                <div>
+                    <div class="result-stage" id="video-result-stage">
+                        <p style="color: #5a5a65;">Your video will appear here</p>
+                    </div>
+                </div>
+                <div class="settings">
+                    <h3>Video Settings</h3>
+                    <div class="setting-group">
+                        <label class="setting-label">Mode</label>
+                        <select class="setting-select" id="vid-mode" onchange="toggleVidUpload()">
+                            <option value="txt2vid">Text → Video</option>
+                            <option value="img2vid">Image → Video</option>
+                        </select>
+                    </div>
+                    <div id="vid-upload-zone" class="upload-zone" style="display:none;" onclick="document.getElementById('vid-upload').click()">
+                        <p style="color: #8a8a95;">📷 Upload starting frame</p>
+                        <input type="file" id="vid-upload" accept="image/*" style="display:none;" onchange="handleVidImageUpload(event)">
+                    </div>
+                    <div id="vid-preview-container" style="display:none; margin-bottom: 12px;">
+                        <img id="vid-preview" style="max-width: 100%; border-radius: 6px;">
+                    </div>
+                    <div class="setting-group">
+                        <label class="setting-label">Duration</label>
+                        <select class="setting-select" id="vid-duration">
+                            <option value="49">2s (49 frames)</option>
+                            <option value="73">3s (73 frames)</option>
+                            <option value="121" selected>5s (121 frames)</option>
+                            <option value="193">8s (193 frames)</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label class="setting-label">Resolution</label>
+                        <select class="setting-select" id="vid-resolution">
+                            <option value="480p">480p</option>
+                            <option value="540p">540p</option>
+                            <option value="720p" selected>720p</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label class="setting-label">Aspect Ratio</label>
+                        <select class="setting-select" id="vid-aspect">
+                            <option value="16:9">16:9</option>
+                            <option value="9:16">9:16</option>
+                            <option value="1:1">1:1</option>
+                        </select>
+                    </div>
+                    <div class="setting-row">                        <div class="setting-group">
+                            <label class="setting-label">Steps</label>
+                            <input type="number" class="setting-input" id="vid-steps" value="8" min="2" max="50">
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Guide Scale</label>
+                            <input type="number" class="setting-input" id="vid-guide" value="3.0" step="0.5" min="1" max="8">
+                        </div>
+                    </div>
+                    <div class="setting-group" id="vid-strength-group" style="display:none;">
+                        <label class="setting-label">Strength (img2vid)</label>
+                        <input type="number" class="setting-input" id="vid-strength" value="0.8" min="0" max="1" step="0.05">
+                    </div>
+                    <div class="setting-group">
+                        <label class="setting-label">Seed (-1 = random)</label>
+                        <input type="number" class="setting-input" id="vid-seed" value="-1">
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="view-chat" class="view">
             <div class="chat-messages" id="chat-messages"></div>
+        </div>
+
+        <div id="view-gallery" class="view">
+            <div class="gallery-grid" id="gallery-grid"></div>
         </div>
     </div>
 
     <div class="input-bar">
         <div class="input-wrapper">
             <textarea id="main-input" placeholder="Describe what you want to create..." onkeydown="handleInput(event)"></textarea>
-            <button onclick="handleSend()" id="send-btn">→</button>
+            <button class="send-btn" onclick="handleSend()" id="send-btn">→</button>
         </div>
     </div>
 
-    <script>
-        // 🌟 UPDATE THESE URLs WITH YOUR KAGGLE NOTEBOOK URLS
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBY9mSpUeat1zu70i4JpcB-7fYxZj5YfCk",
+            authDomain: "slk-1-58b0d.firebaseapp.com",
+            projectId: "slk-1-58b0d",
+            storageBucket: "slk-1-58b0d.firebasestorage.app",
+            messagingSenderId: "1018460322951",
+            appId: "1:1018460322951:web:b05f8be9adfb323b36cc22"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
         const API = {
             chat: "https://coroner-relock-wrath.ngrok-free.dev",
             image: "https://concrete-gossip-outpost.ngrok-free.dev",
             video: "https://satin-keep-cupping.ngrok-free.dev"
         };
 
-        let currentView = 'create';
+        let currentView = 'image';
+        let currentSubMode = 'txt2img';
+        let currentChatMode = 'chat';
         let messages = [];
+        let gallery = JSON.parse(localStorage.getItem('ss_gallery') || '[]');
+        let currentConvId = null;
+        let isGenerating = false;
+        let uploadedImageBase64 = null;
+        let uploadedVidImageBase64 = null;
 
-        function switchView(view) {
+        signInAnonymously(auth).catch(e => console.error(e));
+
+        window.switchView = function(view, el) {
             currentView = view;
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.getElementById(`view-${view}`).classList.add('active');
-            event.target.classList.add('active');
+            if (el) el.classList.add('active');
+            
+            const subTabs = document.getElementById('sub-tabs');
+            subTabs.style.display = (view === 'image') ? 'flex' : 'none';
+            
+            if (view === 'gallery') renderGallery();
+            updatePlaceholder();
+        };
+
+        window.switchSubMode = function(mode, el) {
+            currentSubMode = mode;
+            document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+            if (el) el.classList.add('active');
+            
+            document.getElementById('txt2img-settings').style.display = (mode === 'txt2img') ? 'block' : 'none';
+            document.getElementById('img2img-settings').style.display = (mode === 'img2img') ? 'block' : 'none';
+            document.getElementById('lora-settings').style.display = (mode === 'lora') ? 'block' : 'none';
+            document.getElementById('img-upload-zone').style.display = (mode === 'img2img' || mode === 'upscale') ? 'block' : 'none';
+            
+            updatePlaceholder();
+            if (mode === 'lora') refreshLoraList();
+        };
+        function updatePlaceholder() {
+            const input = document.getElementById('main-input');
+            const placeholders = {
+                'txt2img': 'Describe the image you want to create...',
+                'img2img': 'Describe how to transform the uploaded image...',
+                'upscale': 'Click upload, then press Generate to upscale 2x',
+                'lora': 'Enter LoRA name and CivitAI URL above',
+                'image': 'Describe the image you want to create...',
+                'video': 'Describe the video scene...',
+                'chat': 'Message the AI...'
+            };
+            input.placeholder = placeholders[currentSubMode] || placeholders[currentView] || 'Enter your request...';
         }
 
-        function handleInput(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
+        window.handleImageUpload = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedImageBase64 = e.target.result;
+                document.getElementById('img-preview').src = uploadedImageBase64;
+                document.getElementById('img-preview-container').style.display = 'block';
+                document.getElementById('img-upload-zone').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.clearUploadedImage = function() {
+            uploadedImageBase64 = null;
+            document.getElementById('img-preview-container').style.display = 'none';
+            document.getElementById('img-upload-zone').style.display = 'block';
+            document.getElementById('img-upload').value = '';
+        };
+
+        window.handleVidImageUpload = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedVidImageBase64 = e.target.result;
+                document.getElementById('vid-preview').src = uploadedVidImageBase64;
+                document.getElementById('vid-preview-container').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.toggleVidUpload = function() {
+            const mode = document.getElementById('vid-mode').value;
+            document.getElementById('vid-upload-zone').style.display = (mode === 'img2vid') ? 'block' : 'none';            document.getElementById('vid-strength-group').style.display = (mode === 'img2vid') ? 'block' : 'none';
+        };
+
+        window.registerLora = async function() {
+            const name = document.getElementById('lora-name').value.trim();
+            const url = document.getElementById('lora-url').value.trim();
+            if (!name || !url) { showToast('Fill name and URL', 'error'); return; }
+            
+            try {
+                const formData = new FormData();
+                formData.append('name', name);
+                formData.append('url', url);
+                const res = await fetch(`${API.image}/register_lora`, {method: 'POST', body: formData});
+                const data = await res.json();
+                if (data.status === 'success') {
+                    showToast(`LoRA "${name}" registered!`, 'success');
+                    refreshLoraList();
+                } else {
+                    showToast(`Failed: ${data.error}`, 'error');
+                }
+            } catch (e) {
+                showToast(`Error: ${e.message}`, 'error');
+            }
+        };
+
+        async function refreshLoraList() {
+            try {
+                const res = await fetch(`${API.image}/list_loras`);
+                const data = await res.json();
+                const loras = data.loras || [];
+                
+                const select = document.getElementById('img-lora');
+                select.innerHTML = '<option value="">None</option>' + loras.map(l => `<option value="${l}">${l}</option>`).join('');
+                
+                const list = document.getElementById('lora-list');
+                list.innerHTML = loras.length ? `<strong>Loaded:</strong><br>` + loras.map(l => `• ${l}`).join('<br>') : 'No LoRAs loaded';
+            } catch (e) {
+                console.error(e);
             }
         }
 
-        async function handleSend() {
-            const input = document.getElementById('main-input');
-            const text = input.value.trim();
-            if (!text) return;
+        window.handleInput = function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                window.handleSend();
+            }
+        };
+
+        window.handleSend = async function() {
+            const input = document.getElementById('main-input');            const text = input.value.trim();
+            if (!text && currentSubMode !== 'upscale') return;
 
             input.value = '';
+            input.style.height = 'auto';
 
             if (currentView === 'chat') {
-                messages.push({role: 'user', content: text});                renderMessages();
+                await handleChat(text);
+            } else if (currentView === 'image') {
+                await handleImage(text);
+            } else if (currentView === 'video') {
+                await handleVideo(text);
+            }
+        };
+
+        async function handleChat(text) {
+            isGenerating = true;
+            messages.push({role: 'user', content: text});
+            renderMessages();
+            
+            const btn = document.getElementById('send-btn');
+            btn.disabled = true;
+            
+            const container = document.getElementById('chat-messages');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'msg assistant';
+            loadingDiv.innerHTML = `<div class="bubble"><div class="spinner" style="width:20px; height:20px;"></div></div>`;
+            container.appendChild(loadingDiv);
+            container.scrollTop = container.scrollHeight;
+
+            try {
+                const formData = new FormData();
+                formData.append('messages', JSON.stringify(messages));
+                formData.append('search_web', 'true');
+                formData.append('mode', currentChatMode);
                 
-                const btn = document.getElementById('send-btn');
-                btn.disabled = true;
-                
-                messages.push({role: 'assistant', content: '...', loading: true});
+                const res = await fetch(`${API.chat}/generate_chat`, {method: 'POST', body: formData});
+                const data = await res.json();
+                loadingDiv.remove();
+                messages.push({role: 'assistant', content: data.result_text || 'No response'});
                 renderMessages();
+            } catch (e) {
+                loadingDiv.remove();
+                messages.push({role: 'assistant', content: `Error: ${e.message}`});
+                renderMessages();
+            } finally {
+                isGenerating = false;
+                btn.disabled = false;
+            }
+        }
+        async function handleImage(text) {
+            const stage = document.getElementById('result-stage');
+            stage.innerHTML = '<div class="spinner"></div>';
+            
+            try {
+                const formData = new FormData();
                 
-                try {
-                    const formData = new FormData();
-                    formData.append('messages', JSON.stringify(messages.slice(0, -1)));
-                    formData.append('search_web', 'true');
-                    
-                    const res = await fetch(`${API.chat}/generate_chat`, {method: 'POST', body: formData});
-                    const data = await res.json();
-                    
-                    messages[messages.length - 1] = {role: 'assistant', content: data.result_text || 'No response'};
-                    renderMessages();
-                } catch (e) {
-                    messages[messages.length - 1] = {role: 'assistant', content: `Error: ${e.message}`};
-                    renderMessages();
-                } finally {
-                    btn.disabled = false;
-                }
-            } else {
-                const stage = document.getElementById('result-stage');
-                stage.innerHTML = '<div class="spinner"></div>';
-                
-                try {
-                    const formData = new FormData();
+                if (currentSubMode === 'txt2img') {
                     formData.append('prompt', text);
-                    formData.append('resolution', '1024');
-                    formData.append('aspect_ratio', '1:1');
-                    formData.append('steps', '4');
-                    formData.append('num_images', '1');
-                    formData.append('seed', '-1');
+                    formData.append('resolution', document.getElementById('img-resolution').value);
+                    formData.append('aspect_ratio', document.getElementById('img-aspect').value);
+                    formData.append('steps', document.getElementById('img-steps').value);
+                    formData.append('num_images', document.getElementById('img-batch').value);
+                    formData.append('seed', document.getElementById('img-seed').value);
+                    formData.append('negative_prompt', document.getElementById('img-negative').value);
+                    formData.append('style', document.getElementById('img-style').value);
+                    formData.append('quality', document.getElementById('img-quality').value);
+                    const lora = document.getElementById('img-lora').value;
+                    if (lora) formData.append('lora_name', lora);
                     
                     const res = await fetch(`${API.image}/generate`, {method: 'POST', body: formData});
                     const data = await res.json();
                     
-                    if (data.result_url) {
-                        const fullUrl = `${API.image}${data.result_url}`;
-                        stage.innerHTML = `<img src="${fullUrl}" onclick="window.open(this.src)">`;
+                    if (data.result_urls) {
+                        const urls = data.result_urls.map(url => `${API.image}${url}`);
+                        stage.innerHTML = `<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; padding:16px; width:100%;">${urls.map(url => {
+                            addToGallery(url, 'image', text);
+                            return `<img src="${url}" style="width:100%; border-radius:8px; cursor:pointer;" onclick="window.open(this.src)">`;
+                        }).join('')}</div>`;
+                        showToast('Generated!', 'success');
                     } else {
                         stage.innerHTML = `<p style="color: #ef4444;">Error: ${data.error || 'No result'}</p>`;
                     }
-                } catch (e) {
-                    stage.innerHTML = `<p style="color: #ef4444;">Error: ${e.message}</p>`;
+                } else if (currentSubMode === 'img2img') {
+                    if (!uploadedImageBase64) {
+                        stage.innerHTML = '<p style="color: #ef4444;">Please upload an image first</p>';
+                        return;
+                    }
+                    formData.append('prompt', text);
+                    formData.append('init_image', uploadedImageBase64);
+                    formData.append('strength', document.getElementById('img2img-strength').value);
+                    formData.append('steps', document.getElementById('img2img-steps').value);
+                    formData.append('style', document.getElementById('img2img-style').value);
+                    
+                    const res = await fetch(`${API.image}/generate_img2img`, {method: 'POST', body: formData});
+                    const data = await res.json();
+                    
+                    if (data.result_url) {
+                        const url = `${API.image}${data.result_url}`;                        addToGallery(url, 'image', text);
+                        stage.innerHTML = `<img src="${url}" style="max-width:100%; border-radius:8px;" onclick="window.open(this.src)">`;
+                        showToast('Transformed!', 'success');
+                    } else {
+                        stage.innerHTML = `<p style="color: #ef4444;">Error: ${data.error || 'No result'}</p>`;
+                    }
+                } else if (currentSubMode === 'upscale') {
+                    if (!uploadedImageBase64) {
+                        stage.innerHTML = '<p style="color: #ef4444;">Please upload an image first</p>';
+                        return;
+                    }
+                    formData.append('image', uploadedImageBase64);
+                    
+                    const res = await fetch(`${API.image}/upscale`, {method: 'POST', body: formData});
+                    const data = await res.json();
+                    
+                    if (data.result_url) {
+                        const url = `${API.image}${data.result_url}`;
+                        addToGallery(url, 'image', 'Upscaled 2x');
+                        stage.innerHTML = `<img src="${url}" style="max-width:100%; border-radius:8px;" onclick="window.open(this.src)">`;
+                        showToast('Upscaled 2x!', 'success');
+                    } else {
+                        stage.innerHTML = `<p style="color: #ef4444;">Error: ${data.error || 'No result'}</p>`;
+                    }
                 }
-            }        }
+            } catch (e) {
+                stage.innerHTML = `<p style="color: #ef4444;">Error: ${e.message}</p>`;
+            }
+        }
+
+        async function handleVideo(text) {
+            const stage = document.getElementById('video-result-stage');
+            stage.innerHTML = '<div class="spinner"></div>';
+            
+            try {
+                const formData = new FormData();
+                const mode = document.getElementById('vid-mode').value;
+                
+                formData.append('prompt', text);
+                formData.append('duration', document.getElementById('vid-duration').value);
+                formData.append('steps', document.getElementById('vid-steps').value);
+                formData.append('guide_scale', document.getElementById('vid-guide').value);
+                formData.append('seed', document.getElementById('vid-seed').value);
+                
+                if (mode === 'txt2vid') {
+                    formData.append('resolution', document.getElementById('vid-resolution').value);
+                    formData.append('aspect_ratio', document.getElementById('vid-aspect').value);
+                    const res = await fetch(`${API.video}/generate`, {method: 'POST', body: formData});
+                    const data = await res.json();
+                                        if (data.result_url) {
+                        const url = `${API.video}${data.result_url}`;
+                        addToGallery(url, 'video', text);
+                        stage.innerHTML = `<video controls autoplay loop src="${url}" style="max-width:100%; border-radius:8px;"></video>`;
+                        showToast('Video generated!', 'success');
+                    } else {
+                        stage.innerHTML = `<p style="color: #ef4444;">Error: ${data.error || 'No result'}</p>`;
+                    }
+                } else if (mode === 'img2vid') {
+                    if (!uploadedVidImageBase64) {
+                        stage.innerHTML = '<p style="color: #ef4444;">Please upload a starting frame</p>';
+                        return;
+                    }
+                    formData.append('init_image', uploadedVidImageBase64);
+                    formData.append('strength', document.getElementById('vid-strength').value);
+                    
+                    const res = await fetch(`${API.video}/generate_img2vid`, {method: 'POST', body: formData});
+                    const data = await res.json();
+                    
+                    if (data.result_url) {
+                        const url = `${API.video}${data.result_url}`;
+                        addToGallery(url, 'video', text);
+                        stage.innerHTML = `<video controls autoplay loop src="${url}" style="max-width:100%; border-radius:8px;"></video>`;
+                        showToast('Video from image!', 'success');
+                    } else {
+                        stage.innerHTML = `<p style="color: #ef4444;">Error: ${data.error || 'No result'}</p>`;
+                    }
+                }
+            } catch (e) {
+                stage.innerHTML = `<p style="color: #ef4444;">Error: ${e.message}</p>`;
+            }
+        }
 
         function renderMessages() {
             const container = document.getElementById('chat-messages');
             container.innerHTML = messages.map(m => `
                 <div class="msg ${m.role}">
-                    <div class="bubble">${m.loading ? '<div class="spinner"></div>' : m.content}</div>
+                    <div class="bubble">${m.content.replace(/```([\s\S]*?)```/g, '<pre>$1</pre>')}</div>
                 </div>
             `).join('');
             container.scrollTop = container.scrollHeight;
         }
+
+        function addToGallery(url, type, prompt) {
+            gallery.unshift({id: Date.now() + Math.random(), url, type, prompt, createdAt: Date.now()});
+            if (gallery.length > 100) gallery = gallery.slice(0, 100);
+            localStorage.setItem('ss_gallery', JSON.stringify(gallery));
+        }
+
+        function renderGallery() {            const grid = document.getElementById('gallery-grid');
+            if (gallery.length === 0) {
+                grid.innerHTML = '<p style="color: #5a5a65; grid-column: 1/-1; text-align: center; padding: 80px;">No creations yet</p>';
+                return;
+            }
+            grid.innerHTML = gallery.map(item => `
+                <div class="gallery-item" onclick="window.open('${item.url}')">
+                    ${item.type === 'image' ? `<img src="${item.url}" loading="lazy">` : `<video src="${item.url}" muted></video>`}
+                    <div class="type-badge">${item.type}</div>
+                </div>
+            `).join('');
+        }
+
+        function showToast(msg, type) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        renderGallery();
+        refreshLoraList();
     </script>
 </body>
 </html>
