@@ -11,21 +11,24 @@
 <body>
     <!-- Mobile Header -->
     <div class="mobile-header">
-        <button class="menu-toggle" onclick="window.router.buildNavigation(); document.getElementById('sidebar').classList.toggle('open');">☰</button>
+        <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active');">☰</button>
         <div class="mobile-logo">Saint Silk</div>
         <div style="width: 24px;"></div>
     </div>
     <div class="sidebar-overlay" onclick="document.getElementById('sidebar').classList.remove('open'); this.classList.remove('active');"></div>
 
-    <!-- Sidebar with Auto-Generated Nav -->
+    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="brand">
             <img src="assets/logo.png" alt="Logo" onerror="this.style.display='none'">
             <div class="brand-name">Saint Silk</div>
         </div>
-        
-        <!-- 🌟 AUTO-GENERATED NAVIGATION -->
         <div class="nav-tree" id="nav-tree"></div>
+        <div class="sidebar-footer">
+            <button class="btn btn-primary" onclick="window.router.navigate('/chat')">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> New Chat
+            </button>
+        </div>
     </aside>
 
     <!-- Main Content -->
@@ -37,9 +40,19 @@
             </div>
         </div>
 
-        <!-- 🌟 PAGE CONTENT - Dynamically loaded -->
         <div class="content" id="page-content">
             <div class="page-loading"><div class="spinner"></div></div>
+        </div>
+
+        <!-- Unified Input Bar (Always visible) -->
+        <div class="input-bar">
+            <div class="input-wrapper">
+                <textarea class="input-box" id="main-input" placeholder="Type a message or describe what to create..." onkeydown="handleInput(event)"></textarea>
+                <button class="send-btn" onclick="handleSend()" id="send-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+            </div>
+            <div class="input-hint" id="input-hint">Press Enter to send • Shift+Enter for new line</div>
         </div>
     </main>
 
