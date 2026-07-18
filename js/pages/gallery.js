@@ -1,4 +1,3 @@
-// js/pages/gallery.js
 export default {
     render(container) {
         container.innerHTML = `
@@ -15,31 +14,22 @@ export default {
             </div>
         `;
     },
-
     onLoad() {
         document.getElementById('topbar-title').textContent = 'Gallery';
         this.renderGallery('all');
     },
-
-    onUnload() {
-        console.log('Gallery unloaded');
-    },
-
+    onUnload() { console.log('Gallery unloaded'); },
     renderGallery(filter = 'all') {
         const grid = document.getElementById('gallery-grid');
         if (!grid) return;
-        
         const gallery = JSON.parse(localStorage.getItem('ss_gallery') || '[]');
         const filtered = filter === 'all' ? gallery : gallery.filter(g => g.type === filter);
-        
         const count = document.getElementById('gallery-count');
         if (count) count.textContent = gallery.length;
-        
         if (filtered.length === 0) {
             grid.innerHTML = `<div class="gallery-empty"><h3 style="font-size:18px; margin-bottom:8px; color:var(--text-muted);">No ${filter === 'all' ? '' : filter} creations yet</h3><p>Generate something to see it here</p></div>`;
             return;
         }
-        
         grid.innerHTML = filtered.map(item => 
             `<div class="gallery-item" onclick="window.openGalleryItem('${item.id}')">
                 ${item.type === 'image' ? `<img src="${item.url}" loading="lazy">` : `<video src="${item.url}" muted></video>`}
@@ -58,9 +48,7 @@ window.filterGallery = function(filter, el) {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     el.classList.add('active');
     const galleryPage = window.router?.currentPage;
-    if (galleryPage && galleryPage.renderGallery) {
-        galleryPage.renderGallery(filter);
-    }
+    if (galleryPage && galleryPage.renderGallery) galleryPage.renderGallery(filter);
 };
 
 window.openGalleryItem = function(id) {
@@ -73,13 +61,4 @@ window.openGalleryItem = function(id) {
         const w = window.open('', '_blank');
         w.document.write(`<html><body style="margin:0; background:#000; display:flex; align-items:center; justify-content:center; height:100vh;"><video src="${item.url}" controls autoplay style="max-width:100%; max-height:100%;"></video></body></html>`);
     }
-};
-
-window.addToGallery = function(url, type, prompt) {
-    let gallery = JSON.parse(localStorage.getItem('ss_gallery') || '[]');
-    gallery.unshift({ id: Date.now().toString(36), url, type, prompt, createdAt: Date.now() });
-    if (gallery.length > 100) gallery = gallery.slice(0, 100);
-    localStorage.setItem('ss_gallery', JSON.stringify(gallery));
-    const count = document.getElementById('gallery-count');
-    if (count) count.textContent = gallery.length;
 };
