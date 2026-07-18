@@ -1,5 +1,3 @@
-// config.js - Navigation Tree (Arborescence)
-
 export const NAV_TREE = [
     {
         id: 'create',
@@ -23,9 +21,9 @@ export const NAV_TREE = [
         icon: 'gallery',
         path: '/gallery'
     },
-       {
+    {
         id: 'models',
-        label: 'Models',
+        label: 'Models & LoRAs',
         icon: 'cpu',
         path: '/models'
     }
