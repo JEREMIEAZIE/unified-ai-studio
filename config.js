@@ -22,6 +22,12 @@ export const NAV_TREE = [
         label: 'Gallery',
         icon: 'gallery',
         path: '/gallery'
+    },
+       {
+        id: 'models',
+        label: 'Models',
+        icon: 'cpu',
+        path: '/models'
     }
 ];
 
@@ -29,7 +35,8 @@ export const PAGE_REGISTRY = {
     '/create/image': () => import('./js/pages/image.js'),
     '/create/video': () => import('./js/pages/video.js'),
     '/chat': () => import('./js/pages/chat.js'),
-    '/gallery': () => import('./js/pages/gallery.js')
+    '/gallery': () => import('./js/pages/gallery.js'),
+    '/models': () => import('./js/pages/models.js')
 };
 
 export const DEFAULT_PATH = '/create/image';
