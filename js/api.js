@@ -1,4 +1,3 @@
-// js/api.js
 window.API = { 
     chat: "https://coroner-relock-wrath.ngrok-free.dev", 
     image: "https://concrete-gossip-outpost.ngrok-free.dev", 
