@@ -1,0 +1,121 @@
+/* ===== AUTO-NAVIGATION TREE ===== */
+.nav-tree {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 4px;
+}
+
+.nav-group {
+    margin-bottom: 2px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+    position: relative;
+    user-select: none;
+}
+
+.nav-item:hover {
+    background: var(--bg-hover);
+    color: var(--text-main);
+}
+
+.nav-item.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 16px;
+    background: var(--accent);
+    border-radius: 0 3px 3px 0;
+}
+
+.nav-icon {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.nav-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.nav-label {
+    flex: 1;
+}
+
+.nav-arrow {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.nav-arrow.expanded {
+    transform: rotate(90deg);
+}
+
+.nav-spacer {
+    width: 16px;
+}
+
+.nav-children {
+    margin-left: 16px;
+    padding-left: 8px;
+    border-left: 1px solid var(--border);
+    margin-top: 4px;
+}
+
+/* Depth-based indentation */
+.nav-group[data-depth="1"] .nav-item {
+    font-size: 12px;
+    padding: 8px 12px;
+}
+
+.nav-group[data-depth="2"] .nav-item {
+    font-size: 11px;
+    padding: 6px 12px;
+}
+
+/* Page loading & error states */
+.page-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 40px;
+}
+
+.page-error {
+    text-align: center;
+    padding: 40px;
+    color: var(--danger);
+}
+
+.page-error h3 {
+    margin-bottom: 8px;
+}
