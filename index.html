@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Mobile Header -->
     <div class="mobile-header">
         <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active');">☰</button>
         <div class="mobile-logo">Saint Silk</div>
@@ -17,7 +16,6 @@
     </div>
     <div class="sidebar-overlay" onclick="document.getElementById('sidebar').classList.remove('open'); this.classList.remove('active');"></div>
 
-    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="brand">
             <img src="assets/logo.png" alt="Logo" onerror="this.style.display='none'">
@@ -31,7 +29,6 @@
         </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="main">
         <div class="topbar">
             <div class="topbar-title">
@@ -44,7 +41,6 @@
             <div class="page-loading"><div class="spinner"></div></div>
         </div>
 
-        <!-- Unified Input Bar (Always visible) -->
         <div class="input-bar">
             <div class="input-wrapper">
                 <textarea class="input-box" id="main-input" placeholder="Type a message or describe what to create..." onkeydown="handleInput(event)"></textarea>
@@ -56,7 +52,6 @@
         </div>
     </main>
 
-    <!-- Load Core Modules -->
     <script type="module" src="js/firebase.js"></script>
     <script type="module" src="js/api.js"></script>
     <script type="module" src="js/ui.js"></script>
