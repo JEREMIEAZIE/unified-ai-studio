@@ -1,4 +1,3 @@
-// js/ui.js
 window.showToast = function(msg, type = 'success') {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
@@ -44,7 +43,6 @@ window.handleSend = async function() {
     const text = input.value.trim();
     if (!text) return;
 
-    // INSTANT CLEAR
     input.value = '';
     input.style.height = 'auto';
 
