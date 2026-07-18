@@ -1,4 +1,3 @@
-// js/pages/models.js
 export default {
     render(container) {
         container.innerHTML = `
@@ -8,8 +7,6 @@ export default {
                         <h1>Model Management</h1>
                         <p>Download and manage LoRAs for your AI models</p>
                     </div>
-                    
-                    <!-- Download New LoRA -->
                     <div class="models-section">
                         <h2>Download New LoRA</h2>
                         <div class="lora-form">
@@ -31,16 +28,12 @@ export default {
                             </button>
                         </div>
                     </div>
-
-                    <!-- Registered LoRAs -->
                     <div class="models-section">
                         <h2>Registered LoRAs</h2>
                         <div id="lora-list" class="lora-list">
                             <div class="loading-spinner"><div class="spinner"></div></div>
                         </div>
                     </div>
-
-                    <!-- Info Section -->
                     <div class="models-section">
                         <h2>Where to Find LoRAs</h2>
                         <div class="info-cards">
@@ -60,24 +53,17 @@ export default {
             </div>
         `;
     },
-
     onLoad() {
         document.getElementById('topbar-title').textContent = 'Model Management';
         this.loadLoraList();
     },
-
-    onUnload() {
-        console.log('Models page unloaded');
-    },
-
+    onUnload() { console.log('Models page unloaded'); },
     async loadLoraList() {
         const listContainer = document.getElementById('lora-list');
         if (!listContainer) return;
-
         try {
             const response = await fetch(`${window.API.chat}/list_loras`);
             const data = await response.json();
-            
             if (data.loras && data.loras.length > 0) {
                 listContainer.innerHTML = data.loras.map(lora => `
                     <div class="lora-item">
@@ -95,96 +81,46 @@ export default {
                     </div>
                 `).join('');
             } else {
-                listContainer.innerHTML = `
-                    <div class="empty-state">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <circle cx="12" cy="12" r="10"/>
-                            <line x1="12" y1="8" x2="12" y2="12"/>
-                            <line x1="12" y1="16" x2="12.01" y2="16"/>
-                        </svg>
-                        <p>No LoRAs registered yet</p>
-                        <p class="text-muted">Download your first LoRA above</p>
-                    </div>
-                `;
+                listContainer.innerHTML = `<div class="empty-state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>No LoRAs registered yet</p><p class="text-muted">Download your first LoRA above</p></div>`;
             }
         } catch (e) {
-            listContainer.innerHTML = `
-                <div class="error-state">
-                    <p>Failed to load LoRA list</p>
-                    <p class="text-muted">${e.message}</p>
-                    <p class="text-muted">Make sure the chat server is running</p>
-                </div>
-            `;
+            listContainer.innerHTML = `<div class="error-state"><p>Failed to load LoRA list</p><p class="text-muted">${e.message}</p><p class="text-muted">Make sure the chat server is running</p></div>`;
         }
     }
 };
 
-// Download and register LoRA
 window.downloadLora = async function() {
     const nameInput = document.getElementById('lora-name');
     const urlInput = document.getElementById('lora-url');
     const btn = document.getElementById('download-btn');
-    
     const name = nameInput.value.trim();
     const url = urlInput.value.trim();
-    
-    if (!name || !url) {
-        window.showToast('Please fill in both fields', 'error');
-        return;
-    }
-    
-    // Validate URL
-    try {
-        new URL(url);
-    } catch {
-        window.showToast('Please enter a valid URL', 'error');
-        return;
-    }
+    if (!name || !url) { window.showToast('Please fill in both fields', 'error'); return; }
+    try { new URL(url); } catch { window.showToast('Please enter a valid URL', 'error'); return; }
     
     btn.disabled = true;
     btn.innerHTML = '<div class="spinner"></div> Downloading...';
-    
     try {
         const formData = new FormData();
         formData.append('name', name);
         formData.append('url', url);
-        
-        const response = await fetch(`${window.API.chat}/register_lora`, {
-            method: 'POST',
-            body: formData
-        });
-        
+        const response = await fetch(`${window.API.chat}/register_lora`, { method: 'POST', body: formData });
         const data = await response.json();
-        
         if (data.status === 'success') {
             window.showToast(`LoRA "${name}" downloaded successfully!`, 'success');
             nameInput.value = '';
             urlInput.value = '';
-            
-            // Reload LoRA list
             const modelsPage = window.router.currentPage;
-            if (modelsPage && modelsPage.loadLoraList) {
-                modelsPage.loadLoraList();
-            }
-        } else {
-            throw new Error(data.message || 'Download failed');
-        }
+            if (modelsPage && modelsPage.loadLoraList) modelsPage.loadLoraList();
+        } else { throw new Error(data.message || 'Download failed'); }
     } catch (e) {
         window.showToast(`Download failed: ${e.message}`, 'error');
     } finally {
         btn.disabled = false;
-        btn.innerHTML = `
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-            Download & Register
-        `;
+        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download & Register`;
     }
 };
 
-// Delete LoRA (placeholder - would need backend endpoint)
 window.deleteLora = async function(name) {
     if (!confirm(`Delete LoRA "${name}"?`)) return;
     window.showToast('LoRA deletion not yet implemented', 'error');
