@@ -9,13 +9,8 @@ class Router {
     }
 
     init() {
-        // Build navigation from config
         this.buildNavigation();
-        
-        // Handle browser back/forward
         window.addEventListener('popstate', () => this.navigate(window.location.hash.slice(1) || DEFAULT_PATH, false));
-        
-        // Initial route
         const initialPath = window.location.hash.slice(1) || DEFAULT_PATH;
         this.navigate(initialPath, false);
     }
@@ -23,7 +18,6 @@ class Router {
     buildNavigation() {
         const navContainer = document.getElementById('nav-tree');
         if (!navContainer) return;
-
         navContainer.innerHTML = this.renderNavItems(NAV_TREE, 0);
         this.attachNavListeners();
     }
@@ -32,8 +26,7 @@ class Router {
         return items.map(item => {
             const hasChildren = item.children && item.children.length > 0;
             const isExpanded = this.expandedMenus.has(item.id);
-            const isActive = this.currentPath === item.path || 
-                            (hasChildren && item.children.some(c => c.path === this.currentPath));
+            const isActive = this.currentPath === item.path || (hasChildren && item.children.some(c => c.path === this.currentPath));
 
             return `
                 <div class="nav-group" data-depth="${depth}">
@@ -75,7 +68,6 @@ class Router {
                 const path = item.dataset.path;
                 const id = item.dataset.id;
                 
-                // Toggle submenu if has children
                 if (item.classList.contains('has-children')) {
                     if (this.expandedMenus.has(id)) {
                         this.expandedMenus.delete(id);
@@ -85,11 +77,9 @@ class Router {
                     this.buildNavigation();
                 }
                 
-                // Navigate to page
                 if (path && PAGE_REGISTRY[path]) {
                     this.navigate(path);
                 } else if (item.classList.contains('has-children')) {
-                    // If parent has no page, navigate to first child
                     const firstChild = this.findFirstChild(id);
                     if (firstChild) this.navigate(firstChild.path);
                 }
@@ -111,25 +101,19 @@ class Router {
             return;
         }
 
-        // Unload current page
         if (this.currentPage && this.currentPage.onUnload) {
             this.currentPage.onUnload();
         }
 
         this.currentPath = path;
         
-        // Update URL
         if (updateHistory) {
             window.history.pushState({}, '', `#${path}`);
         }
 
-        // Update nav highlighting
         this.buildNavigation();
-        
-        // Auto-expand parent menu
         this.expandParentOf(path);
 
-        // Load page module
         const content = document.getElementById('page-content');
         content.innerHTML = '<div class="page-loading"><div class="spinner"></div></div>';
 
@@ -160,6 +144,5 @@ class Router {
     }
 }
 
-// Export singleton
 window.router = new Router();
 export default window.router;
